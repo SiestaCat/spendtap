@@ -11,6 +11,8 @@ class BreakdownView {
       balance: 0
     };
     this.endBalance = 0;
+    this.allCategories = []; // Para el filtro
+    this.selectedCategories = []; // Categorías seleccionadas para filtrar
   }
 
   // Inicializar vista
@@ -27,6 +29,9 @@ class BreakdownView {
     // Configurar navegación
     this.setupNavigation();
     
+    // Configurar filtro por categorías
+    await this.setupCategoryFilter();
+    
     // Actualizar período mostrado
     this.updatePeriod();
   }
@@ -39,51 +44,69 @@ class BreakdownView {
       try {
         console.log(`Loading breakdown data for ${month}/${year}...`);
         
-        // Cargar datos usando los nuevos endpoints de breakdown
-        const [monthData, categoryData, descriptionData, balanceData] = await Promise.all([
-          window.apiService.getMonthBreakdown(month, year),
-          window.apiService.getCategoryBreakdownMonth(month, year),
-          window.apiService.getDescriptionBreakdownMonth(month, year),
-          window.apiService.getBalance(month, year)
-        ]);
+        const categories = this.selectedCategories.length > 0 ? this.selectedCategories : [];
         
-        // Procesar datos del resumen mensual
-        if (monthData) {
-          this.monthSummary = {
-            totalIncome: Math.abs(parseFloat(monthData.income_amount || 0)),
-            totalExpenses: Math.abs(parseFloat(monthData.expense_amount || 0)),
-            balance: parseFloat(monthData.total || 0)
-          };
-        }
-        
-        // Procesar datos del desglose por categoría
-        if (categoryData && categoryData.breakdown) {
-          this.categoryBreakdown = categoryData.breakdown.map(item => ({
-            category: item.category || 'Sin categoría',
-            count: parseInt(item.entry_count || 0),
-            totalAmount: Math.abs(parseFloat(item.total || 0)),
-            expenses: Math.abs(parseFloat(item.expense_amount || 0)),
-            income: Math.abs(parseFloat(item.income_amount || 0)),
-            sortValue: Math.abs(parseFloat(item.total || 0))
-          })).sort((a, b) => b.sortValue - a.sortValue);
-        }
-        
-        // Procesar datos del desglose por descripción
-        if (descriptionData && descriptionData.breakdown) {
-          this.descriptionBreakdown = descriptionData.breakdown.map(item => ({
-            description: item.description || 'Sin descripción',
-            count: parseInt(item.entry_count || 0),
-            totalAmount: Math.abs(parseFloat(item.total || 0)),
-            expenses: Math.abs(parseFloat(item.expense_amount || 0)),
-            income: Math.abs(parseFloat(item.income_amount || 0)),
-            category: item.category || 'Sin categoría',
-            sortValue: Math.abs(parseFloat(item.total || 0))
-          })).sort((a, b) => b.sortValue - a.sortValue);
-        }
-        
-        // Procesar datos del balance
-        if (balanceData) {
-          this.endBalance = parseFloat(balanceData.balance || 0);
+        if (categories.length > 0) {
+          // Si hay filtros de categoría, usar el endpoint de transacciones filtradas y calcular breakdown
+          console.log('Loading filtered transactions for breakdown calculation...');
+          this.transactions = await window.apiService.getMonthData(month, year, categories);
+          
+          // Calcular breakdown desde transacciones filtradas
+          this.calculateMonthSummary();
+          this.calculateBreakdowns();
+          
+          // Balance no se puede filtrar por categoría, usar balance completo
+          const balanceData = await window.apiService.getBalance(month, year);
+          if (balanceData) {
+            this.endBalance = parseFloat(balanceData.balance || 0);
+          }
+        } else {
+          // Sin filtros, usar endpoints optimizados de breakdown
+          const [monthData, categoryData, descriptionData, balanceData] = await Promise.all([
+            window.apiService.getMonthBreakdown(month, year),
+            window.apiService.getCategoryBreakdownMonth(month, year),
+            window.apiService.getDescriptionBreakdownMonth(month, year),
+            window.apiService.getBalance(month, year)
+          ]);
+          
+          // Procesar datos del resumen mensual
+          if (monthData) {
+            this.monthSummary = {
+              totalIncome: Math.abs(parseFloat(monthData.income_amount || 0)),
+              totalExpenses: Math.abs(parseFloat(monthData.expense_amount || 0)),
+              balance: parseFloat(monthData.total || 0)
+            };
+          }
+          
+          // Procesar datos del desglose por categoría
+          if (categoryData && categoryData.breakdown) {
+            this.categoryBreakdown = categoryData.breakdown.map(item => ({
+              category: item.category || 'Sin categoría',
+              count: parseInt(item.entry_count || 0),
+              totalAmount: Math.abs(parseFloat(item.total || 0)),
+              expenses: Math.abs(parseFloat(item.expense_amount || 0)),
+              income: Math.abs(parseFloat(item.income_amount || 0)),
+              sortValue: Math.abs(parseFloat(item.total || 0))
+            })).sort((a, b) => b.sortValue - a.sortValue);
+          }
+          
+          // Procesar datos del desglose por descripción
+          if (descriptionData && descriptionData.breakdown) {
+            this.descriptionBreakdown = descriptionData.breakdown.map(item => ({
+              description: item.description || 'Sin descripción',
+              count: parseInt(item.entry_count || 0),
+              totalAmount: Math.abs(parseFloat(item.total || 0)),
+              expenses: Math.abs(parseFloat(item.expense_amount || 0)),
+              income: Math.abs(parseFloat(item.income_amount || 0)),
+              category: item.category || 'Sin categoría',
+              sortValue: Math.abs(parseFloat(item.total || 0))
+            })).sort((a, b) => b.sortValue - a.sortValue);
+          }
+          
+          // Procesar datos del balance
+          if (balanceData) {
+            this.endBalance = parseFloat(balanceData.balance || 0);
+          }
         }
         
         console.log('Breakdown data loaded from API successfully');
@@ -96,6 +119,93 @@ class BreakdownView {
         this.endBalance = 0;
       }
     }
+  }
+
+  // Calcular resumen mensual desde transacciones
+  calculateMonthSummary() {
+    this.monthSummary = {
+      totalIncome: 0,
+      totalExpenses: 0,
+      balance: 0
+    };
+
+    this.transactions.forEach(transaction => {
+      if (transaction.type === 'expense') {
+        this.monthSummary.totalExpenses += Math.abs(transaction.amount);
+      } else if (transaction.type === 'income') {
+        this.monthSummary.totalIncome += Math.abs(transaction.amount);
+      }
+    });
+
+    this.monthSummary.balance = this.monthSummary.totalIncome - this.monthSummary.totalExpenses;
+  }
+
+  // Calcular desgloses por categoría y descripción desde transacciones
+  calculateBreakdowns() {
+    // Desglose por categoría
+    const categoryMap = new Map();
+    
+    this.transactions.forEach(transaction => {
+      const category = transaction.category || 'Sin categoría';
+      
+      if (!categoryMap.has(category)) {
+        categoryMap.set(category, {
+          category,
+          count: 0,
+          totalAmount: 0,
+          expenses: 0,
+          income: 0
+        });
+      }
+      
+      const data = categoryMap.get(category);
+      data.count++;
+      
+      if (transaction.type === 'expense') {
+        data.expenses += Math.abs(transaction.amount);
+        data.totalAmount += Math.abs(transaction.amount);
+      } else {
+        data.income += Math.abs(transaction.amount);
+        data.totalAmount += Math.abs(transaction.amount);
+      }
+    });
+    
+    // Convertir a array y ordenar por cantidad total
+    this.categoryBreakdown = Array.from(categoryMap.values())
+      .sort((a, b) => b.totalAmount - a.totalAmount);
+
+    // Desglose por descripción
+    const descriptionMap = new Map();
+    
+    this.transactions.forEach(transaction => {
+      const description = transaction.description || 'Sin descripción';
+      
+      if (!descriptionMap.has(description)) {
+        descriptionMap.set(description, {
+          description,
+          count: 0,
+          totalAmount: 0,
+          expenses: 0,
+          income: 0,
+          category: transaction.category || 'Sin categoría'
+        });
+      }
+      
+      const data = descriptionMap.get(description);
+      data.count++;
+      
+      if (transaction.type === 'expense') {
+        data.expenses += Math.abs(transaction.amount);
+        data.totalAmount += Math.abs(transaction.amount);
+      } else {
+        data.income += Math.abs(transaction.amount);
+        data.totalAmount += Math.abs(transaction.amount);
+      }
+    });
+    
+    // Convertir a array y ordenar por cantidad total
+    this.descriptionBreakdown = Array.from(descriptionMap.values())
+      .sort((a, b) => b.totalAmount - a.totalAmount);
   }
 
 
@@ -292,6 +402,218 @@ class BreakdownView {
         }
       });
     }
+  }
+
+  // Configurar filtro por categorías
+  async setupCategoryFilter() {
+    const filterInput = document.getElementById('breakdown-category-filter-input');
+    const filterDropdown = document.getElementById('breakdown-category-filter-dropdown');
+    const clearFiltersBtn = document.getElementById('breakdown-clear-filters-btn');
+    const selectedCategoriesDiv = document.getElementById('breakdown-selected-categories');
+
+    if (!filterInput || !filterDropdown) return;
+
+    // Cargar todas las categorías disponibles
+    await this.loadAllCategories();
+
+    let selectedIndex = -1;
+
+    // Función para mostrar opciones en el dropdown
+    const showOptions = (filter = '') => {
+      const filteredOptions = this.allCategories.filter(category => 
+        category.toLowerCase().includes(filter.toLowerCase()) &&
+        !this.selectedCategories.includes(category)
+      );
+
+      if (filteredOptions.length === 0) {
+        filterDropdown.classList.add('hidden');
+        return;
+      }
+
+      filterDropdown.innerHTML = filteredOptions.map((category, index) => 
+        `<div class="px-4 py-2 cursor-pointer text-slate-900 dark:text-white hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors" data-category="${category}" data-index="${index}">
+          ${category}
+        </div>`
+      ).join('');
+
+      filterDropdown.classList.remove('hidden');
+      selectedIndex = -1;
+    };
+
+    // Función para ocultar dropdown
+    const hideOptions = () => {
+      filterDropdown.classList.add('hidden');
+      selectedIndex = -1;
+    };
+
+    // Función para seleccionar categoría
+    const selectCategory = (category) => {
+      if (!this.selectedCategories.includes(category)) {
+        this.selectedCategories.push(category);
+        this.renderSelectedCategories();
+        this.applyFilters();
+      }
+      filterInput.value = '';
+      hideOptions();
+    };
+
+    // Eventos del input
+    filterInput.addEventListener('input', (e) => {
+      showOptions(e.target.value);
+    });
+
+    filterInput.addEventListener('focus', () => {
+      if (this.allCategories.length > 0) {
+        showOptions(filterInput.value);
+      }
+    });
+
+    filterInput.addEventListener('keydown', (e) => {
+      const options = filterDropdown.querySelectorAll('[data-category]');
+      
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, options.length - 1);
+          this.updateFilterSelection(options, selectedIndex);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, -1);
+          this.updateFilterSelection(options, selectedIndex);
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (selectedIndex >= 0 && options[selectedIndex]) {
+            selectCategory(options[selectedIndex].dataset.category);
+          }
+          break;
+        case 'Escape':
+          hideOptions();
+          break;
+      }
+    });
+
+    // Eventos del dropdown
+    filterDropdown.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+    });
+
+    filterDropdown.addEventListener('click', (e) => {
+      const categoryElement = e.target.closest('[data-category]');
+      if (categoryElement) {
+        selectCategory(categoryElement.dataset.category);
+      }
+    });
+
+    // Ocultar cuando se hace click fuera
+    document.addEventListener('click', (e) => {
+      if (!filterInput.contains(e.target) && !filterDropdown.contains(e.target)) {
+        hideOptions();
+      }
+    });
+
+    // Botón para limpiar filtros
+    if (clearFiltersBtn) {
+      clearFiltersBtn.addEventListener('click', () => {
+        this.clearAllFilters();
+      });
+    }
+  }
+
+  // Cargar todas las categorías disponibles
+  async loadAllCategories() {
+    if (window.apiService) {
+      try {
+        this.allCategories = await window.apiService.getAllCategories();
+      } catch (error) {
+        console.error('Error loading categories for filter:', error);
+        this.allCategories = [];
+      }
+    }
+  }
+
+  // Actualizar selección visual en el dropdown de filtro
+  updateFilterSelection(options, selectedIndex) {
+    options.forEach((opt, index) => {
+      if (index === selectedIndex) {
+        opt.classList.add('bg-indigo-100', 'dark:bg-indigo-900/50');
+      } else {
+        opt.classList.remove('bg-indigo-100', 'dark:bg-indigo-900/50');
+      }
+    });
+  }
+
+  // Renderizar categorías seleccionadas
+  renderSelectedCategories() {
+    const selectedCategoriesDiv = document.getElementById('breakdown-selected-categories');
+    const clearFiltersBtn = document.getElementById('breakdown-clear-filters-btn');
+
+    if (!selectedCategoriesDiv) return;
+
+    if (this.selectedCategories.length === 0) {
+      selectedCategoriesDiv.classList.add('hidden');
+      if (clearFiltersBtn) clearFiltersBtn.classList.add('hidden');
+      return;
+    }
+
+    selectedCategoriesDiv.classList.remove('hidden');
+    if (clearFiltersBtn) clearFiltersBtn.classList.remove('hidden');
+
+    selectedCategoriesDiv.innerHTML = this.selectedCategories.map(category => 
+      `<span class="inline-flex items-center gap-1 px-3 py-1 text-sm font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full">
+        ${category}
+        <button type="button" class="ml-1 text-indigo-500 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300" data-remove-category="${category}">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </span>`
+    ).join('');
+
+    // Event listeners para remover categorías
+    selectedCategoriesDiv.addEventListener('click', (e) => {
+      const removeBtn = e.target.closest('[data-remove-category]');
+      if (removeBtn) {
+        const category = removeBtn.dataset.removeCategory;
+        this.removeCategoryFilter(category);
+      }
+    });
+  }
+
+  // Remover una categoría del filtro
+  removeCategoryFilter(category) {
+    this.selectedCategories = this.selectedCategories.filter(cat => cat !== category);
+    this.renderSelectedCategories();
+    this.applyFilters();
+  }
+
+  // Limpiar todos los filtros
+  clearAllFilters() {
+    this.selectedCategories = [];
+    this.renderSelectedCategories();
+    this.applyFilters();
+  }
+
+  // Aplicar filtros (recargar datos)
+  async applyFilters() {
+    // Mostrar indicador de carga
+    const categoryContainer = document.getElementById('category-breakdown');
+    const descriptionContainer = document.getElementById('description-breakdown');
+    
+    if (categoryContainer) {
+      categoryContainer.innerHTML = '<div class="p-4 text-center text-slate-500">Cargando...</div>';
+    }
+    if (descriptionContainer) {
+      descriptionContainer.innerHTML = '<div class="p-4 text-center text-slate-500">Cargando...</div>';
+    }
+
+    // Cargar datos con filtros aplicados
+    await this.loadData();
+    this.renderMonthSummary();
+    this.renderEndBalance();
+    this.renderCategoryBreakdown();
+    this.renderDescriptionBreakdown();
   }
 }
 

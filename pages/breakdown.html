@@ -53,6 +53,38 @@
     </div>
   </div>
 
+  <!-- Filtro por categorías -->
+  <div class="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-semibold" data-i18n="filter.title">Filtrar por categorías</h3>
+      <button id="breakdown-clear-filters-btn" type="button" class="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors hidden">
+        <span data-i18n="filter.clearAll">Limpiar filtros</span>
+      </button>
+    </div>
+    
+    <!-- Categorías seleccionadas -->
+    <div id="breakdown-selected-categories" class="flex flex-wrap gap-2 mb-3 hidden">
+      <!-- Las categorías seleccionadas aparecerán aquí -->
+    </div>
+    
+    <!-- Input y dropdown para seleccionar categorías -->
+    <div class="relative">
+      <input 
+        type="text" 
+        id="breakdown-category-filter-input" 
+        class="w-full px-4 py-3 rounded-2xl ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow focus:outline-none focus:ring-2 focus:ring-indigo-500/60 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all" 
+        data-i18n-placeholder="filter.placeholder"
+        placeholder="Buscar categorías para filtrar..."
+        autocomplete="off"
+      >
+      
+      <!-- Dropdown para categorías -->
+      <div id="breakdown-category-filter-dropdown" class="absolute z-20 mt-1 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg hidden max-h-48 overflow-y-auto">
+        <!-- Las opciones se llenarán dinámicamente -->
+      </div>
+    </div>
+  </div>
+
   <!-- Desglose por categorías -->
   <div class="mb-8">
     <h2 class="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-100" data-i18n="breakdown.byCategory">Por categoría</h2>
