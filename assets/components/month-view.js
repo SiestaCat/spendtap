@@ -1,4 +1,4 @@
-// === Vista mensual con datos ficticios ===
+// === Vista mensual ===
 
 class MonthView {
   constructor() {
@@ -19,110 +19,14 @@ class MonthView {
         console.log(`Loaded ${this.expenses.length} transactions from API`);
         return;
       } catch (error) {
-        console.error('Failed to load from API, falling back to fictional data:', error);
+        console.error('Failed to load from API:', error);
       }
     }
     
-    // Fallback a datos ficticios si no hay API
-    this.generateFictionalExpenses();
-  }
-
-  // Generar datos ficticios de gastos e ingresos (fallback)
-  generateFictionalExpenses() {
-    const { month, year } = window.dateManager.getCurrentMonthYear();
-    const daysInMonth = new Date(year, month, 0).getDate();
-    
-    const expenseTypes = [
-      { category: 'food', items: ['Supermercado', 'Restaurante', 'Café', 'Panadería', 'Comida rápida'] },
-      { category: 'transport', items: ['Metro', 'Autobús', 'Taxi', 'Gasolina', 'Parking'] },
-      { category: 'entertainment', items: ['Cinema', 'Concierto', 'Libro', 'Videojuego', 'Teatro'] },
-      { category: 'shopping', items: ['Ropa', 'Zapatos', 'Electrónicos', 'Casa', 'Farmacia'] },
-      { category: 'services', items: ['Internet', 'Móvil', 'Luz', 'Agua', 'Gas'] }
-    ];
-
-    const incomeTypes = [
-      { category: 'salary', items: ['Salario', 'Bonus', 'Horas extra'] },
-      { category: 'freelance', items: ['Proyecto freelance', 'Consultoría', 'Trabajo remoto'] },
-      { category: 'other', items: ['Venta segunda mano', 'Reembolso', 'Regalo en efectivo'] }
-    ];
-
+    // Si no hay API o falla, lista vacía
     this.expenses = [];
-
-    // Generar 15-25 gastos aleatorios en el mes
-    const numExpenses = Math.floor(Math.random() * 11) + 15; // 15-25
-    
-    for (let i = 0; i < numExpenses; i++) {
-      const randomDay = Math.floor(Math.random() * daysInMonth) + 1;
-      const randomType = expenseTypes[Math.floor(Math.random() * expenseTypes.length)];
-      const randomItem = randomType.items[Math.floor(Math.random() * randomType.items.length)];
-      
-      // Generar cantidades realistas según el tipo
-      let amount;
-      switch (randomType.category) {
-        case 'food':
-          amount = (Math.random() * 45 + 5).toFixed(2); // 5-50€
-          break;
-        case 'transport':
-          amount = (Math.random() * 25 + 2).toFixed(2); // 2-27€
-          break;
-        case 'entertainment':
-          amount = (Math.random() * 35 + 8).toFixed(2); // 8-43€
-          break;
-        case 'shopping':
-          amount = (Math.random() * 80 + 10).toFixed(2); // 10-90€
-          break;
-        case 'services':
-          amount = (Math.random() * 60 + 20).toFixed(2); // 20-80€
-          break;
-        default:
-          amount = (Math.random() * 30 + 5).toFixed(2);
-      }
-
-      this.expenses.push({
-        date: `${year}-${month.toString().padStart(2, '0')}-${randomDay.toString().padStart(2, '0')}`,
-        description: randomItem,
-        amount: parseFloat(amount),
-        category: randomType.category,
-        type: 'expense'
-      });
-    }
-
-    // Generar 2-5 ingresos aleatorios en el mes
-    const numIncomes = Math.floor(Math.random() * 4) + 2; // 2-5
-    
-    for (let i = 0; i < numIncomes; i++) {
-      const randomDay = Math.floor(Math.random() * daysInMonth) + 1;
-      const randomType = incomeTypes[Math.floor(Math.random() * incomeTypes.length)];
-      const randomItem = randomType.items[Math.floor(Math.random() * randomType.items.length)];
-      
-      // Generar cantidades realistas de ingresos
-      let amount;
-      switch (randomType.category) {
-        case 'salary':
-          amount = (Math.random() * 1500 + 1000).toFixed(2); // 1000-2500€
-          break;
-        case 'freelance':
-          amount = (Math.random() * 800 + 200).toFixed(2); // 200-1000€
-          break;
-        case 'other':
-          amount = (Math.random() * 150 + 50).toFixed(2); // 50-200€
-          break;
-        default:
-          amount = (Math.random() * 300 + 100).toFixed(2);
-      }
-
-      this.expenses.push({
-        date: `${year}-${month.toString().padStart(2, '0')}-${randomDay.toString().padStart(2, '0')}`,
-        description: randomItem,
-        amount: parseFloat(amount),
-        category: randomType.category,
-        type: 'income'
-      });
-    }
-
-    // Ordenar por fecha descendente (más recientes primero)
-    this.expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
   }
+
 
   // Formatear fecha para mostrar
   formatDate(dateString) {
@@ -133,19 +37,14 @@ class MonthView {
     return `${day} ${month}`;
   }
 
-  // Obtener nombre de categoría traducido
+  // Obtener nombre de categoría
   getCategoryName(category) {
-    const names = {
-      food: 'Comida',
-      transport: 'Transporte',
-      entertainment: 'Entretenimiento',
-      shopping: 'Compras',
-      services: 'Servicios',
-      salary: 'Salario',
-      freelance: 'Freelance',
-      other: 'Otros'
-    };
-    return names[category] || 'Otros';
+    // Devolver la categoría tal como viene de la API
+    // Si está vacía o es null/undefined, mostrar "Sin categoría"
+    if (!category || category.trim() === '') {
+      return window.i18n ? window.i18n.t('messages.noCategory') : 'Sin categoría';
+    }
+    return category;
   }
 
   // Renderizar lista de gastos e ingresos
@@ -299,7 +198,7 @@ class MonthView {
       container.innerHTML = '<div class="text-center py-8 text-slate-500">Cargando...</div>';
     }
 
-    // Cargar datos (API o ficticios)
+    // Cargar datos
     await this.loadExpensesFromAPI();
     
     // Renderizar

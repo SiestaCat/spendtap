@@ -27,7 +27,8 @@
     "invalidYear": "El año debe estar entre 1900 y 9999.",
     "errorSaving": "Error al guardar la transacción.",
     "errorCreating": "Error al crear la transacción.",
-    "transactionCreated": "Transacción creada exitosamente"
+    "transactionCreated": "Transacción creada exitosamente",
+    "noCategory": "Sin categoría"
   },
   "steps": {
     "cents": "0,10€",
