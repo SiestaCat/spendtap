@@ -8,6 +8,12 @@ function initHomePage() {
   if (window.initPlusMinusButtons) window.initPlusMinusButtons();
   if (window.initSaveButton) window.initSaveButton();
 
+  // Show date only on home page
+  const homeDate = document.getElementById('home-date');
+  if (homeDate) {
+    homeDate.classList.remove('hidden');
+  }
+
   // Demo: Ver mes
   const viewMonthBtn = document.getElementById('viewMonthBtn');
   if (viewMonthBtn) {
