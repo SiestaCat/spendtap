@@ -78,5 +78,11 @@
     "selectLanguage": "Seleccionar idioma",
     "spanish": "Español",
     "english": "Inglés"
+  },
+  "currency": {
+    "selectCurrency": "Seleccionar moneda",
+    "euro": "Euro (EUR)",
+    "dollar": "Dólar (USD)",
+    "pound": "Libra (GBP)"
   }
 }

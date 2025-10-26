@@ -47,6 +47,26 @@ class MonthView {
     return category;
   }
 
+  // Formatear moneda usando el selector de moneda actual
+  formatCurrency(amount) {
+    if (window.currencySelector && window.currencySelector.formatCurrency) {
+      return window.currencySelector.formatCurrency(amount);
+    }
+    
+    // Fallback usando localStorage directamente
+    const savedCurrency = localStorage.getItem('spendtap-currency') || 'EUR';
+    if (savedCurrency === 'EUR') {
+      return `${amount.toFixed(2)}€`;
+    } else if (savedCurrency === 'USD') {
+      return `$${amount.toFixed(2)}`;
+    } else if (savedCurrency === 'GBP') {
+      return `£${amount.toFixed(2)}`;
+    }
+    
+    // Fallback final al euro
+    return `${amount.toFixed(2)}€`;
+  }
+
   // Renderizar lista de gastos e ingresos
   renderExpensesList() {
     const container = document.getElementById('expenses-list');
@@ -62,7 +82,7 @@ class MonthView {
           <div class="flex items-center justify-between">
             <span class="inline-block px-2 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-full truncate max-w-32">${this.getCategoryName(item.category)}</span>
             <p class="font-bold text-lg ${item.type === 'income' ? 'text-green-600' : 'text-red-600'} flex-shrink-0">
-              ${item.type === 'income' ? '+' : ''}${item.amount.toFixed(2)}€
+              ${item.type === 'income' ? '+' : ''}${this.formatCurrency(item.amount)}
             </p>
           </div>
         </div>
@@ -116,7 +136,7 @@ class MonthView {
     const amountElement = document.getElementById('modal-amount');
     const sign = transaction.type === 'income' ? '+' : '';
     const color = transaction.type === 'income' ? 'text-green-600' : 'text-red-600';
-    amountElement.textContent = `${sign}${transaction.amount.toFixed(2)}€`;
+    amountElement.textContent = `${sign}${this.formatCurrency(transaction.amount)}`;
     amountElement.className = `mt-1 text-2xl font-bold ${color}`;
     
     // Tipo
@@ -172,13 +192,13 @@ class MonthView {
     const totalBalanceElement = document.getElementById('total-balance');
 
     if (totalExpensesElement) {
-      totalExpensesElement.textContent = `${totalExpenses.toFixed(2)}€`;
+      totalExpensesElement.textContent = this.formatCurrency(totalExpenses);
     }
     if (totalIncomeElement) {
-      totalIncomeElement.textContent = `${totalIncome.toFixed(2)}€`;
+      totalIncomeElement.textContent = this.formatCurrency(totalIncome);
     }
     if (totalBalanceElement) {
-      totalBalanceElement.textContent = `${balance.toFixed(2)}€`;
+      totalBalanceElement.textContent = this.formatCurrency(balance);
       // Color dinámico según el balance
       if (balance > 0) {
         totalBalanceElement.className = 'text-xl font-bold text-green-600';

@@ -7,6 +7,7 @@ function initMonthPage() {
   if (window.initDateManager) window.initDateManager();
   if (window.initMonthView) window.initMonthView();
   if (window.initLanguageSelector) window.initLanguageSelector();
+  if (window.initCurrencySelector) window.initCurrencySelector();
 
   // Show date section for month page
   const homeDate = document.getElementById('home-date');

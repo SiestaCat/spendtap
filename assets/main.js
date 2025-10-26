@@ -245,6 +245,11 @@ function initHomePage() {
   if (window.initLanguageSelector) {
     window.initLanguageSelector();
   }
+  
+  // Initialize currency selector
+  if (window.initCurrencySelector) {
+    window.initCurrencySelector();
+  }
 
   // Demo: Ver mes
   const viewMonthBtn = document.getElementById('viewMonthBtn');
