@@ -8,6 +8,7 @@ class MonthView {
     this.categoriesCache = [];
     this.allCategories = []; // Para el filtro
     this.selectedCategories = []; // Categorías seleccionadas para filtrar
+    this.currentSort = 'newest'; // Ordenamiento por defecto
   }
 
   // Cargar datos desde la API
@@ -70,12 +71,40 @@ class MonthView {
     return `${amount.toFixed(2)}€`;
   }
 
+  // Aplicar ordenamiento a las transacciones
+  sortTransactions(transactions) {
+    const sortedTransactions = [...transactions];
+    
+    switch (this.currentSort) {
+      case 'newest':
+        sortedTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        break;
+      case 'oldest':
+        sortedTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+        break;
+      case 'highest':
+        sortedTransactions.sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
+        break;
+      case 'lowest':
+        sortedTransactions.sort((a, b) => Math.abs(a.amount) - Math.abs(b.amount));
+        break;
+      default:
+        // Por defecto, ordenar por fecha (más nuevos primero)
+        sortedTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+    
+    return sortedTransactions;
+  }
+
   // Renderizar lista de gastos e ingresos
   renderExpensesList() {
     const container = document.getElementById('expenses-list');
     if (!container) return;
 
-    container.innerHTML = this.expenses.map((item, index) => `
+    // Aplicar ordenamiento antes de renderizar
+    const sortedExpenses = this.sortTransactions(this.expenses);
+
+    container.innerHTML = sortedExpenses.map((item, index) => `
       <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-sm ring-1 ring-slate-200 dark:ring-slate-700 cursor-pointer hover:shadow-md hover:scale-[1.01] transition-all" data-transaction-index="${index}">
         <div class="flex-1 min-w-0 pr-4">
           <div class="flex items-center justify-between mb-1">
@@ -99,10 +128,12 @@ class MonthView {
   // Añadir event listeners a los elementos de la lista
   addClickHandlers() {
     const transactionElements = document.querySelectorAll('[data-transaction-index]');
+    const sortedExpenses = this.sortTransactions(this.expenses);
+    
     transactionElements.forEach(element => {
       element.addEventListener('click', (e) => {
         const index = parseInt(e.currentTarget.dataset.transactionIndex);
-        const transaction = this.expenses[index];
+        const transaction = sortedExpenses[index];
         if (transaction) {
           this.openTransactionModal(transaction);
         }
@@ -812,6 +843,9 @@ class MonthView {
     
     // Configurar filtro por categorías
     this.setupCategoryFilter();
+    
+    // Configurar selector de ordenamiento
+    this.setupSortSelector();
   }
 
   // Configurar modal de copiar mes anterior
@@ -1487,6 +1521,24 @@ class MonthView {
     await this.loadExpensesFromAPI();
     this.renderExpensesList();
     this.renderSummary();
+  }
+
+  // Configurar selector de ordenamiento
+  setupSortSelector() {
+    const sortSelector = document.getElementById('sort-selector');
+    if (!sortSelector) return;
+
+    // Establecer valor por defecto
+    sortSelector.value = this.currentSort;
+
+    // Event listener para cambios de ordenamiento
+    sortSelector.addEventListener('change', (e) => {
+      this.currentSort = e.target.value;
+      console.log('Sort changed to:', this.currentSort);
+      
+      // Re-renderizar con nuevo ordenamiento
+      this.renderExpensesList();
+    });
   }
 }
 

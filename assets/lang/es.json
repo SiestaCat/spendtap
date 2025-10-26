@@ -129,5 +129,12 @@
     "showing": "Mostrando {count} transacciones",
     "allCategories": "Todas las categorías",
     "showingFiltered": "Mostrando datos filtrados"
+  },
+  "sort": {
+    "label": "Ordenar por",
+    "newest": "Los más nuevos",
+    "oldest": "Los más antiguos",
+    "highest": "Los más caros",
+    "lowest": "Los más baratos"
   }
 }

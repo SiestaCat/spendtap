@@ -17,6 +17,30 @@
     </button>
   </div>
 
+  <!-- Resumen del mes -->
+  <div class="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-semibold" data-i18n="month.summary">Resumen del mes</h3>
+      <div id="summary-filter-indicator" class="text-sm text-indigo-600 dark:text-indigo-400 hidden">
+        <span data-i18n="filter.showingFiltered">Mostrando datos filtrados</span>
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="text-center">
+        <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="month.totalIncome">Total ingresos</p>
+        <p class="text-xl font-bold text-green-600" id="total-income">0,00€</p>
+      </div>
+      <div class="text-center">
+        <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="month.totalExpenses">Total gastos</p>
+        <p class="text-xl font-bold text-red-600" id="total-expenses">0,00€</p>
+      </div>
+      <div class="text-center">
+        <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="month.balance">Balance total</p>
+        <p class="text-xl font-bold" id="total-balance">0,00€</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Filtro por categorías -->
   <div class="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
     <div class="flex items-center justify-between mb-3">
@@ -49,28 +73,14 @@
     </div>
   </div>
 
-  <!-- Resumen del mes -->
-  <div class="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
-    <div class="flex items-center justify-between mb-3">
-      <h3 class="text-lg font-semibold" data-i18n="month.summary">Resumen del mes</h3>
-      <div id="summary-filter-indicator" class="text-sm text-indigo-600 dark:text-indigo-400 hidden">
-        <span data-i18n="filter.showingFiltered">Mostrando datos filtrados</span>
-      </div>
-    </div>
-    <div class="grid grid-cols-3 gap-4">
-      <div class="text-center">
-        <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="month.totalIncome">Total ingresos</p>
-        <p class="text-xl font-bold text-green-600" id="total-income">0,00€</p>
-      </div>
-      <div class="text-center">
-        <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="month.totalExpenses">Total gastos</p>
-        <p class="text-xl font-bold text-red-600" id="total-expenses">0,00€</p>
-      </div>
-      <div class="text-center">
-        <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="month.balance">Balance total</p>
-        <p class="text-xl font-bold" id="total-balance">0,00€</p>
-      </div>
-    </div>
+  <!-- Selector de ordenamiento -->
+  <div class="mb-6 flex justify-end">
+    <select id="sort-selector" class="px-4 py-2 rounded-xl ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow focus:outline-none focus:ring-2 focus:ring-indigo-500/60 transition-all cursor-pointer">
+      <option value="newest" data-i18n-option="sort.newest">Los más nuevos</option>
+      <option value="oldest" data-i18n-option="sort.oldest">Los más antiguos</option>
+      <option value="highest" data-i18n-option="sort.highest">Los más caros</option>
+      <option value="lowest" data-i18n-option="sort.lowest">Los más baratos</option>
+    </select>
   </div>
 
   <!-- Lista de gastos del mes -->

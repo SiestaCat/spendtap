@@ -129,5 +129,12 @@
     "showing": "Showing {count} transactions",
     "allCategories": "All categories",
     "showingFiltered": "Showing filtered data"
+  },
+  "sort": {
+    "label": "Sort by",
+    "newest": "Newest first",
+    "oldest": "Oldest first",
+    "highest": "Highest amount",
+    "lowest": "Lowest amount"
   }
 }
