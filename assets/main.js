@@ -1,3 +1,6 @@
+// Import CSS
+import './style.css';
+
 // === Tema (por defecto: sistema) ===
 const themeBtn = document.getElementById('themeBtn');
 const themeIcon = document.getElementById('themeIcon');
@@ -15,27 +18,29 @@ const Theme = {
     if (mode === 'system') {
       if (prefersDark.matches) root.classList.add('dark');
     }
-    // Actualiza UI
-    if (mode === 'system') {
-      themeLabel.textContent = 'Tema: Sistema';
-      themeIcon.innerHTML = `
-        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.7' class='w-4 h-4'>
-          <path stroke-linecap='round' stroke-linejoin='round' d='M3 16.5A1.5 1.5 0 0 0 4.5 18h15a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 19.5 6h-15A1.5 1.5 0 0 0 3 7.5v9Z' />
-          <path stroke-linecap='round' stroke-linejoin='round' d='M3 16.5h18M8.25 18h7.5' />
-        </svg>`;
-    } else if (mode === 'light') {
-      themeLabel.textContent = 'Tema: Claro';
-      themeIcon.innerHTML = `
-        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.7' class='w-4 h-4'>
-          <path stroke-linecap='round' stroke-linejoin='round' d='M12 3v2m0 14v2m9-9h-2M5 12H3m15.36 6.36l-1.42-1.42M7.05 7.05 5.64 5.64m12.02 0-1.41 1.41M7.05 16.95l-1.41 1.41' />
-          <circle cx='12' cy='12' r='4'/>
-        </svg>`;
-    } else {
-      themeLabel.textContent = 'Tema: Oscuro';
-      themeIcon.innerHTML = `
-        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.7' class='w-4 h-4'>
-          <path stroke-linecap='round' stroke-linejoin='round' d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z' />
-        </svg>`;
+    // Actualiza UI solo si los elementos existen
+    if (themeLabel && themeIcon) {
+      if (mode === 'system') {
+        themeLabel.textContent = 'Tema: Sistema';
+        themeIcon.innerHTML = `
+          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.7' class='w-4 h-4'>
+            <path stroke-linecap='round' stroke-linejoin='round' d='M3 16.5A1.5 1.5 0 0 0 4.5 18h15a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 19.5 6h-15A1.5 1.5 0 0 0 3 7.5v9Z' />
+            <path stroke-linecap='round' stroke-linejoin='round' d='M3 16.5h18M8.25 18h7.5' />
+          </svg>`;
+      } else if (mode === 'light') {
+        themeLabel.textContent = 'Tema: Claro';
+        themeIcon.innerHTML = `
+          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.7' class='w-4 h-4'>
+            <path stroke-linecap='round' stroke-linejoin='round' d='M12 3v2m0 14v2m9-9h-2M5 12H3m15.36 6.36l-1.42-1.42M7.05 7.05 5.64 5.64m12.02 0-1.41 1.41M7.05 16.95l-1.41 1.41' />
+            <circle cx='12' cy='12' r='4'/>
+          </svg>`;
+      } else {
+        themeLabel.textContent = 'Tema: Oscuro';
+        themeIcon.innerHTML = `
+          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.7' class='w-4 h-4'>
+            <path stroke-linecap='round' stroke-linejoin='round' d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z' />
+          </svg>`;
+      }
     }
   }
 };
@@ -48,12 +53,14 @@ prefersDark.addEventListener('change', () => {
   if (Theme.get() === 'system') Theme.apply('system');
 });
 
-// Toggle de tema: sistema -> claro -> oscuro -> sistema
-themeBtn.addEventListener('click', () => {
-  const current = Theme.get();
-  const next = current === 'system' ? 'light' : current === 'light' ? 'dark' : 'system';
-  Theme.set(next);
-});
+// Toggle de tema: sistema -> claro -> oscuro -> sistema (solo si el botón existe)
+if (themeBtn) {
+  themeBtn.addEventListener('click', () => {
+    const current = Theme.get();
+    const next = current === 'system' ? 'light' : current === 'light' ? 'dark' : 'system';
+    Theme.set(next);
+  });
+}
 
 // === Lógica +/- ===
 const minusBtn = document.getElementById('minusBtn');

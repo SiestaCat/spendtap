@@ -33,7 +33,7 @@ export default defineConfig({
       }
     }
   },
-  publicDir: 'assets',
+  publicDir: false, // Disable automatic copying to avoid raw style.css
   plugins: [
     {
       name: 'copy-templates',
@@ -59,8 +59,11 @@ export default defineConfig({
           console.warn('Could not copy assets/components:', err.message)
         }
         
-        // Move additional files to assets
-        const additionalFiles = ['style.css', 'main.js', 'pages.js', 'template-system.js']
+        // Copy lang directory from assets to dist/assets/lang
+        copyDir('assets/lang', 'dist/assets/lang')
+        
+        // Move additional files to assets (excluding style.css since it's now processed through JS)
+        const additionalFiles = ['main.js', 'pages.js', 'template-system.js']
         additionalFiles.forEach(file => {
           try {
             if (readdirSync('dist').includes(file)) {
@@ -71,8 +74,7 @@ export default defineConfig({
           }
         })
         
-        // Copy lang directory to assets
-        copyDir('dist/lang', 'dist/assets/lang')
+        // Lang files already copied above from assets/lang
         
         // Copy remaining directories to root (for backward compatibility)
         copyDir('pages', 'dist/pages')
