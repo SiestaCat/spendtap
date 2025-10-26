@@ -261,24 +261,54 @@ class HomeSaveModal {
       modalInput.value = mainInput.value;
     }
 
-    // Establecer fecha y hora actual
+    // Establecer fecha y hora según filtro o actual
     const now = new Date();
     const dateInput = document.getElementById('save-date-input');
     const timeInput = document.getElementById('save-time-input');
     const monthInput = document.getElementById('save-month-input');
     const yearInput = document.getElementById('save-year-input');
 
-    if (dateInput) {
-      dateInput.value = now.toISOString().split('T')[0];
-    }
-    if (timeInput) {
-      timeInput.value = now.toTimeString().slice(0, 5);
-    }
-    if (monthInput) {
-      monthInput.value = (now.getMonth() + 1).toString();
-    }
-    if (yearInput) {
-      yearInput.value = now.getFullYear().toString();
+    // Obtener mes y año del filtro actual
+    const currentFilter = window.dateManager ? window.dateManager.getCurrentMonthYear() : null;
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
+
+    // Verificar si el filtro es diferente al mes/año actual
+    const isDifferentFromCurrent = currentFilter && 
+      (currentFilter.month !== currentMonth || currentFilter.year !== currentYear);
+
+    if (isDifferentFromCurrent) {
+      // Usar valores del filtro
+      const filterMonth = currentFilter.month.toString().padStart(2, '0');
+      const filterYear = currentFilter.year.toString();
+      const filterDateString = `${filterYear}-${filterMonth}-01`;
+      
+      if (dateInput) {
+        dateInput.value = filterDateString;
+      }
+      if (timeInput) {
+        timeInput.value = '00:01';
+      }
+      if (monthInput) {
+        monthInput.value = currentFilter.month.toString();
+      }
+      if (yearInput) {
+        yearInput.value = currentFilter.year.toString();
+      }
+    } else {
+      // Usar valores actuales
+      if (dateInput) {
+        dateInput.value = now.toISOString().split('T')[0];
+      }
+      if (timeInput) {
+        timeInput.value = now.toTimeString().slice(0, 5);
+      }
+      if (monthInput) {
+        monthInput.value = currentMonth.toString();
+      }
+      if (yearInput) {
+        yearInput.value = currentYear.toString();
+      }
     }
 
     // Cargar datos de la API
