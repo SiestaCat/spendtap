@@ -13,6 +13,29 @@
 
   <!-- Fecha solo en home -->
   <div id="home-date" class="mt-4 hidden">
-    <p class="text-3xl font-bold text-slate-700 dark:text-slate-200" data-i18n="app.currentMonth">Octubre 2025</p>
+    <div class="flex items-center justify-center gap-3">
+      <!-- Botones navegación izquierda -->
+      <div class="flex items-center gap-1">
+        <button id="prevYearBtn" type="button" class="px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 shadow-sm ring-1 ring-slate-300/30 dark:ring-slate-700/50 transition-all hover:scale-105 active:scale-95">
+          <span>&lt;<span id="prevYearLabel">2024</span></span>
+        </button>
+        <button id="prevMonthBtn" type="button" class="px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 shadow-sm ring-1 ring-slate-300/30 dark:ring-slate-700/50 transition-all hover:scale-105 active:scale-95">
+          <span>&lt;<span id="prevMonthLabel">Sep</span></span>
+        </button>
+      </div>
+
+      <!-- Fecha actual -->
+      <p class="text-3xl font-bold text-slate-700 dark:text-slate-200" data-i18n="app.currentMonth">Octubre 2025</p>
+
+      <!-- Botones navegación derecha -->
+      <div class="flex items-center gap-1">
+        <button id="nextMonthBtn" type="button" class="px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 shadow-sm ring-1 ring-slate-300/30 dark:ring-slate-700/50 transition-all hover:scale-105 active:scale-95">
+          <span><span id="nextMonthLabel">Nov</span>&gt;</span>
+        </button>
+        <button id="nextYearBtn" type="button" class="px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 shadow-sm ring-1 ring-slate-300/30 dark:ring-slate-700/50 transition-all hover:scale-105 active:scale-95">
+          <span><span id="nextYearLabel">2026</span>&gt;</span>
+        </button>
+      </div>
+    </div>
   </div>
 </header>

@@ -7,6 +7,7 @@ function initHomePage() {
   if (window.initStepButtons) window.initStepButtons();
   if (window.initPlusMinusButtons) window.initPlusMinusButtons();
   if (window.initSaveButton) window.initSaveButton();
+  if (window.initDateManager) window.initDateManager();
 
   // Show date only on home page
   const homeDate = document.getElementById('home-date');

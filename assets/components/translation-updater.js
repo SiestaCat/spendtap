@@ -7,10 +7,15 @@ function updateTranslations() {
   const elements = document.querySelectorAll('[data-i18n]');
   elements.forEach(element => {
     const key = element.getAttribute('data-i18n');
-    const translation = window.t(key);
     
-    if (translation !== key) {
-      element.textContent = translation;
+    // Manejar fecha dinámica especialmente
+    if (key === 'app.currentMonth' && window.dateManager) {
+      element.textContent = window.dateManager.formatCurrentDate();
+    } else {
+      const translation = window.t(key);
+      if (translation !== key) {
+        element.textContent = translation;
+      }
     }
   });
 
