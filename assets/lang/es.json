@@ -55,6 +55,11 @@
     "category": "Categoría", 
     "amount": "Cantidad",
     "date": "Fecha",
-    "type": "Tipo"
+    "type": "Tipo",
+    "delete": "Eliminar",
+    "confirmDelete": "¿Eliminar transacción?",
+    "confirmDeleteMessage": "Esta acción no se puede deshacer.",
+    "cancel": "Cancelar",
+    "confirmDeleteAction": "Eliminar"
   }
 }

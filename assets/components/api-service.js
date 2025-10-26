@@ -97,6 +97,28 @@ class ApiService {
       return [];
     }
   }
+
+  // Eliminar una transacción
+  async deleteTransaction(id) {
+    try {
+      const url = `${this.baseUrl}/api/spent/delete/${id}`;
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Delete response:', data);
+      return true;
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+      return false;
+    }
+  }
 }
 
 // Instancia global

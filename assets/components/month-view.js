@@ -187,6 +187,9 @@ class MonthView {
 
   // Abrir modal con detalles de la transacción
   openTransactionModal(transaction) {
+    // Guardar referencia para eliminación
+    this.currentTransaction = transaction;
+    
     // Rellenar datos del modal
     document.getElementById('modal-description').textContent = transaction.description;
     document.getElementById('modal-category').textContent = this.getCategoryName(transaction.category);
@@ -311,16 +314,20 @@ class MonthView {
   // Configurar event listeners para cerrar modal
   setupModalCloseHandlers() {
     const modal = document.getElementById('transaction-modal');
+    const confirmModal = document.getElementById('delete-confirm-modal');
     const closeButton = document.getElementById('close-modal');
+    const deleteButton = document.getElementById('delete-transaction');
+    const cancelDeleteButton = document.getElementById('cancel-delete');
+    const confirmDeleteButton = document.getElementById('confirm-delete');
     
-    // Cerrar con botón X
+    // Cerrar modal principal con botón X
     if (closeButton) {
       closeButton.addEventListener('click', () => {
         this.closeTransactionModal();
       });
     }
     
-    // Cerrar al hacer click en el fondo
+    // Cerrar modal principal al hacer click en el fondo
     if (modal) {
       modal.addEventListener('click', (e) => {
         if (e.target === modal) {
@@ -329,12 +336,96 @@ class MonthView {
       });
     }
     
+    // Abrir modal de confirmación de eliminación
+    if (deleteButton) {
+      deleteButton.addEventListener('click', () => {
+        this.openDeleteConfirmModal();
+      });
+    }
+    
+    // Cancelar eliminación
+    if (cancelDeleteButton) {
+      cancelDeleteButton.addEventListener('click', () => {
+        this.closeDeleteConfirmModal();
+      });
+    }
+    
+    // Confirmar eliminación
+    if (confirmDeleteButton) {
+      confirmDeleteButton.addEventListener('click', () => {
+        this.deleteTransaction();
+      });
+    }
+    
+    // Cerrar modal de confirmación al hacer click en el fondo
+    if (confirmModal) {
+      confirmModal.addEventListener('click', (e) => {
+        if (e.target === confirmModal) {
+          this.closeDeleteConfirmModal();
+        }
+      });
+    }
+    
     // Cerrar con tecla Escape
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-        this.closeTransactionModal();
+      if (e.key === 'Escape') {
+        if (!confirmModal.classList.contains('hidden')) {
+          this.closeDeleteConfirmModal();
+        } else if (!modal.classList.contains('hidden')) {
+          this.closeTransactionModal();
+        }
       }
     });
+  }
+
+  // Abrir modal de confirmación de eliminación
+  openDeleteConfirmModal() {
+    const confirmModal = document.getElementById('delete-confirm-modal');
+    confirmModal.classList.remove('hidden');
+    
+    // Focus en botón cancelar
+    const cancelButton = document.getElementById('cancel-delete');
+    if (cancelButton) {
+      cancelButton.focus();
+    }
+  }
+
+  // Cerrar modal de confirmación de eliminación
+  closeDeleteConfirmModal() {
+    const confirmModal = document.getElementById('delete-confirm-modal');
+    confirmModal.classList.add('hidden');
+  }
+
+  // Eliminar transacción
+  async deleteTransaction() {
+    if (!this.currentTransaction || !window.apiService) {
+      return;
+    }
+
+    try {
+      // Llamar a la API para eliminar
+      const success = await window.apiService.deleteTransaction(this.currentTransaction.id);
+      
+      if (success) {
+        // Cerrar ambos modales
+        this.closeDeleteConfirmModal();
+        this.closeTransactionModal();
+        
+        // Recargar datos
+        await this.loadExpensesFromAPI();
+        this.renderExpensesList();
+        this.renderSummary();
+        
+        // Mostrar mensaje de éxito
+        console.log('Transaction deleted successfully');
+      } else {
+        console.error('Failed to delete transaction');
+        // TODO: Mostrar mensaje de error al usuario
+      }
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+      // TODO: Mostrar mensaje de error al usuario
+    }
   }
 }
 
