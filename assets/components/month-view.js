@@ -113,8 +113,8 @@ class MonthView {
           </div>
           <div class="flex items-center justify-between">
             <span class="inline-block px-2 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-full truncate max-w-32">${this.getCategoryName(item.category)}</span>
-            <p class="font-bold text-lg ${item.type === 'income' ? 'text-green-600' : 'text-red-600'} flex-shrink-0">
-              ${item.type === 'income' ? '+' : ''}${this.formatCurrency(item.amount)}
+            <p class="font-bold text-lg ${item.amount >= 0 ? 'text-green-600' : 'text-red-600'} flex-shrink-0">
+              ${item.amount >= 0 ? '+' : ''}${this.formatCurrency(item.amount)}
             </p>
           </div>
         </div>
@@ -166,17 +166,17 @@ class MonthView {
     });
     document.getElementById('modal-date').textContent = dateString;
     
-    // Cantidad con color
+    // Cantidad con color basado en el signo
     const amountElement = document.getElementById('modal-amount');
-    const sign = transaction.type === 'income' ? '+' : '';
-    const color = transaction.type === 'income' ? 'text-green-600' : 'text-red-600';
+    const sign = transaction.amount >= 0 ? '+' : '';
+    const color = transaction.amount >= 0 ? 'text-green-600' : 'text-red-600';
     amountElement.textContent = `${sign}${this.formatCurrency(transaction.amount)}`;
     amountElement.className = `mt-1 text-2xl font-bold ${color}`;
     
-    // Tipo
+    // Tipo basado en el signo
     const typeElement = document.getElementById('modal-type');
-    const typeText = transaction.type === 'income' ? 'Ingreso' : 'Gasto';
-    const typeColor = transaction.type === 'income' ? 'text-green-600' : 'text-red-600';
+    const typeText = transaction.amount >= 0 ? 'Ingreso' : 'Gasto';
+    const typeColor = transaction.amount >= 0 ? 'text-green-600' : 'text-red-600';
     typeElement.textContent = typeText;
     typeElement.className = `mt-1 text-sm font-medium ${typeColor}`;
     
@@ -205,20 +205,23 @@ class MonthView {
 
   // Calcular y mostrar resumen (filtrado según categorías seleccionadas)
   renderSummary() {
-    const expenses = this.expenses.filter(item => item.type === 'expense');
-    const incomes = this.expenses.filter(item => item.type === 'income');
-    
-    // Asegurar que los gastos sean siempre positivos para el cálculo
-    const totalExpenses = expenses.reduce((sum, expense) => sum + Math.abs(expense.amount), 0);
-    const totalIncome = incomes.reduce((sum, income) => sum + Math.abs(income.amount), 0);
+    // Calcular basándose en el signo del amount, no en el tipo
+    const totalExpenses = this.expenses
+      .filter(item => item.amount < 0)
+      .reduce((sum, expense) => sum + Math.abs(expense.amount), 0);
+      
+    const totalIncome = this.expenses
+      .filter(item => item.amount >= 0)
+      .reduce((sum, income) => sum + Math.abs(income.amount), 0);
+      
     const balance = totalIncome - totalExpenses;
 
     console.log('Summary calculation (filtered):', {
       totalExpenses,
       totalIncome,
       balance,
-      expensesCount: expenses.length,
-      incomesCount: incomes.length,
+      negativeTransactions: this.expenses.filter(item => item.amount < 0).length,
+      positiveTransactions: this.expenses.filter(item => item.amount >= 0).length,
       appliedFilters: this.selectedCategories,
       totalTransactions: this.expenses.length
     });
