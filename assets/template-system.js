@@ -40,8 +40,16 @@ class TemplateSystem {
       .replace('{{content}}', pageData.content || '')
       .replace('{{mainClass}}', pageData.mainClass || '');
 
-    // Render the page
-    document.documentElement.innerHTML = rendered;
+    // Render the page - preserve head elements (especially CSS from Vite in dev)
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(rendered, 'text/html');
+    
+    // Update title
+    document.title = doc.title;
+    
+    // Replace body content but preserve existing head elements in development
+    document.body.innerHTML = doc.body.innerHTML;
+    document.body.className = doc.body.className;
 
     // Load header component
     const headerElement = document.getElementById('header-component');
