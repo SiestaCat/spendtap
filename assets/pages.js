@@ -38,9 +38,9 @@ export const pages = {
         content,
         mainClass: this.mainClass,
         onRender: () => {
-          // Initialize month view functionality
-          if (window.initMonthView) {
-            window.initMonthView();
+          // Initialize month page functionality
+          if (window.initMonthPage) {
+            window.initMonthPage();
           }
         }
       };
@@ -53,7 +53,9 @@ export async function loadPage(pageName) {
   const page = pages[pageName];
   if (page) {
     const pageData = await page.load();
-    await templateSystem.route(`/${pageName}`, pageData);
+    const currentParams = window.location.search;
+    const path = pageName === 'home' ? `/${currentParams}`.replace('/?', '/?') : `/${pageName}${currentParams}`;
+    await templateSystem.route(path, pageData);
   }
 }
 
@@ -61,7 +63,7 @@ export async function loadPage(pageName) {
 export function initRouter() {
   // Handle initial page load
   const path = window.location.pathname;
-  const pageName = path === '/' ? 'home' : path.slice(1);
+  const pageName = path === '/' || path === '/home' ? 'home' : path.slice(1);
   loadPage(pageName);
 
   // Make loadPage globally available

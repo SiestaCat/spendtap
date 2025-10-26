@@ -19,7 +19,13 @@ function initHomePage() {
   const viewMonthBtn = document.getElementById('viewMonthBtn');
   if (viewMonthBtn) {
     viewMonthBtn.addEventListener('click', () => {
-      if (window.loadPage) {
+      if (window.loadPage && window.dateManager) {
+        const { month, year } = window.dateManager.getCurrentMonthYear();
+        const url = new URL(window.location);
+        url.pathname = '/month';
+        url.searchParams.set('month', month);
+        url.searchParams.set('year', year);
+        window.history.pushState({}, '', url.toString());
         window.loadPage('month');
       }
     });

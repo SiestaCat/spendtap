@@ -123,6 +123,11 @@ class DateManager {
     
     // Actualizar display
     this.updateDateDisplay();
+    
+    // Si estamos en la vista mensual, regenerar los gastos
+    if (window.location.pathname === '/month' && window.monthView) {
+      window.monthView.init();
+    }
   }
 }
 

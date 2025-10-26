@@ -58,6 +58,7 @@ class TemplateSystem {
     await this.loadScript('/assets/components/plus-minus-buttons.js');
     await this.loadScript('/assets/components/save-button.js');
     await this.loadScript('/assets/components/month-view.js');
+    await this.loadScript('/assets/components/month-page.js');
     await this.loadScript('/assets/components/home-page.js');
 
     // Wait a bit for script to execute and then initialize
@@ -113,7 +114,8 @@ class TemplateSystem {
     };
 
     // Update URL without page reload
-    if (path !== window.location.pathname) {
+    const currentFullPath = window.location.pathname + window.location.search;
+    if (path !== currentFullPath) {
       history.pushState(serializableState, '', path);
     }
 

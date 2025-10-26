@@ -133,6 +133,22 @@ class MonthView {
     if (backBtn) {
       backBtn.addEventListener('click', () => {
         if (window.loadPage) {
+          // Mantener los parámetros actuales de la URL
+          const currentUrl = new URL(window.location);
+          const month = currentUrl.searchParams.get('month');
+          const year = currentUrl.searchParams.get('year');
+          
+          console.log('Current URL params:', { month, year });
+          
+          const newUrl = new URL(window.location.origin);
+          newUrl.pathname = '/';
+          
+          if (month) newUrl.searchParams.set('month', month);
+          if (year) newUrl.searchParams.set('year', year);
+          
+          console.log('New URL:', newUrl.toString());
+          
+          window.history.pushState({}, '', newUrl.toString());
           window.loadPage('home');
         }
       });
