@@ -119,6 +119,71 @@ class ApiService {
       return false;
     }
   }
+
+  // Editar una transacción
+  async editTransaction(id, data) {
+    try {
+      const url = `${this.baseUrl}/api/spent/edit/${id}`;
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: this.getHeaders(),
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('Edit response:', result);
+      return result;
+    } catch (error) {
+      console.error('Error editing transaction:', error);
+      return null;
+    }
+  }
+
+  // Obtener todas las descripciones
+  async getAllDescriptions() {
+    try {
+      const url = `${this.baseUrl}/api/spent/all_descriptions`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.descriptions || [];
+    } catch (error) {
+      console.error('Error fetching descriptions:', error);
+      return [];
+    }
+  }
+
+  // Obtener todas las categorías
+  async getAllCategories() {
+    try {
+      const url = `${this.baseUrl}/api/spent/all_categories`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.categories || [];
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      return [];
+    }
+  }
 }
 
 // Instancia global

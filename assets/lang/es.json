@@ -57,6 +57,8 @@
     "date": "Fecha",
     "type": "Tipo",
     "delete": "Eliminar",
+    "edit": "Editar",
+    "save": "Guardar",
     "confirmDelete": "¿Eliminar transacción?",
     "confirmDeleteMessage": "Esta acción no se puede deshacer.",
     "cancel": "Cancelar",

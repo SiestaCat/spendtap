@@ -3,6 +3,9 @@
 class MonthView {
   constructor() {
     this.expenses = [];
+    this.editStepState = { currentStepIndex: 1 }; // Para el editor de cantidad
+    this.descriptionsCache = [];
+    this.categoriesCache = [];
   }
 
   // Cargar datos desde la API
@@ -326,8 +329,11 @@ class MonthView {
     const confirmModal = document.getElementById('delete-confirm-modal');
     const closeButton = document.getElementById('close-modal');
     const deleteButton = document.getElementById('delete-transaction');
+    const editButton = document.getElementById('edit-transaction');
     const cancelDeleteButton = document.getElementById('cancel-delete');
     const confirmDeleteButton = document.getElementById('confirm-delete');
+    const cancelEditButton = document.getElementById('cancel-edit');
+    const saveEditButton = document.getElementById('save-edit');
     
     // Cerrar modal principal con botón X
     if (closeButton) {
@@ -352,6 +358,13 @@ class MonthView {
       });
     }
     
+    // Abrir modo edición
+    if (editButton) {
+      editButton.addEventListener('click', () => {
+        this.openEditMode();
+      });
+    }
+    
     // Cancelar eliminación
     if (cancelDeleteButton) {
       cancelDeleteButton.addEventListener('click', () => {
@@ -366,6 +379,20 @@ class MonthView {
       });
     }
     
+    // Cancelar edición
+    if (cancelEditButton) {
+      cancelEditButton.addEventListener('click', () => {
+        this.closeEditMode();
+      });
+    }
+    
+    // Guardar edición
+    if (saveEditButton) {
+      saveEditButton.addEventListener('click', () => {
+        this.saveTransaction();
+      });
+    }
+    
     // Cerrar modal de confirmación al hacer click en el fondo
     if (confirmModal) {
       confirmModal.addEventListener('click', (e) => {
@@ -374,6 +401,9 @@ class MonthView {
         }
       });
     }
+    
+    // Configurar botones de edición de cantidad
+    this.setupEditAmountHandlers();
     
     // Cerrar con tecla Escape
     document.addEventListener('keydown', (e) => {
@@ -434,6 +464,195 @@ class MonthView {
     } catch (error) {
       console.error('Error deleting transaction:', error);
       // TODO: Mostrar mensaje de error al usuario
+    }
+  }
+
+  // Abrir modo edición
+  async openEditMode() {
+    // Cargar datos de API para dropdowns
+    await this.loadEditData();
+    
+    // Llenar campos del formulario con datos actuales
+    this.populateEditForm();
+    
+    // Cambiar vista
+    document.getElementById('modal-view').classList.add('hidden');
+    document.getElementById('modal-edit').classList.remove('hidden');
+  }
+
+  // Cerrar modo edición
+  closeEditMode() {
+    document.getElementById('modal-edit').classList.add('hidden');
+    document.getElementById('modal-view').classList.remove('hidden');
+  }
+
+  // Cargar datos para los dropdowns
+  async loadEditData() {
+    if (window.apiService) {
+      try {
+        this.descriptionsCache = await window.apiService.getAllDescriptions();
+        this.categoriesCache = await window.apiService.getAllCategories();
+        
+        // Poblar datalists
+        this.populateDatalist('descriptions-list', this.descriptionsCache);
+        this.populateDatalist('categories-list', this.categoriesCache);
+      } catch (error) {
+        console.error('Error loading edit data:', error);
+      }
+    }
+  }
+
+  // Poblar datalist con opciones
+  populateDatalist(listId, options) {
+    const datalist = document.getElementById(listId);
+    if (datalist) {
+      datalist.innerHTML = options.map(option => `<option value="${option}"></option>`).join('');
+    }
+  }
+
+  // Llenar formulario con datos actuales
+  populateEditForm() {
+    if (!this.currentTransaction) return;
+
+    const transaction = this.currentTransaction;
+    
+    // Descripción y categoría
+    document.getElementById('edit-description').value = transaction.description || '';
+    document.getElementById('edit-category').value = transaction.category || '';
+    
+    // Cantidad
+    document.getElementById('edit-amount').value = Math.abs(transaction.amount).toFixed(2);
+    
+    // Fecha y hora
+    const date = new Date(transaction.date);
+    const dateStr = date.toISOString().split('T')[0];
+    const timeStr = date.toTimeString().slice(0, 5);
+    
+    document.getElementById('edit-date').value = dateStr;
+    document.getElementById('edit-time').value = timeStr;
+    
+    // Mes y año
+    document.getElementById('edit-month').value = (date.getMonth() + 1).toString();
+    document.getElementById('edit-year').value = date.getFullYear().toString();
+    
+    // Actualizar step label
+    this.updateEditStepLabel();
+  }
+
+  // Configurar handlers para edición de cantidad
+  setupEditAmountHandlers() {
+    const minusBtn = document.getElementById('edit-minus-btn');
+    const plusBtn = document.getElementById('edit-plus-btn');
+    const stepBtn = document.getElementById('edit-step-btn');
+    
+    if (minusBtn) {
+      minusBtn.addEventListener('click', () => this.adjustEditAmount(false));
+    }
+    if (plusBtn) {
+      plusBtn.addEventListener('click', () => this.adjustEditAmount(true));
+    }
+    if (stepBtn) {
+      stepBtn.addEventListener('click', () => this.cycleEditStep());
+    }
+  }
+
+  // Ajustar cantidad en modo edición
+  adjustEditAmount(increase) {
+    const input = document.getElementById('edit-amount');
+    if (!input || !window.STEP_VALUES) return;
+
+    const currentValue = parseFloat(input.value) || 0;
+    const step = window.STEP_VALUES[this.editStepState.currentStepIndex];
+    const stepValue = step ? step.value : 1;
+    
+    let newValue = increase ? currentValue + stepValue : currentValue - stepValue;
+    newValue = Math.max(0, newValue);
+    
+    input.value = newValue.toFixed(2);
+  }
+
+  // Cambiar step en modo edición
+  cycleEditStep() {
+    if (!window.STEP_VALUES) return;
+
+    this.editStepState.currentStepIndex = (this.editStepState.currentStepIndex + 1) % window.STEP_VALUES.length;
+    this.updateEditStepLabel();
+  }
+
+  // Actualizar label del step en edición
+  updateEditStepLabel() {
+    const stepLabel = document.getElementById('edit-step-label');
+    if (stepLabel && window.STEP_VALUES) {
+      const currentStep = window.STEP_VALUES[this.editStepState.currentStepIndex];
+      if (currentStep) {
+        stepLabel.textContent = currentStep.label;
+      }
+    }
+  }
+
+  // Guardar transacción editada
+  async saveTransaction() {
+    if (!this.currentTransaction || !window.apiService) return;
+
+    // Recoger datos del formulario
+    const description = document.getElementById('edit-description').value.trim();
+    const category = document.getElementById('edit-category').value.trim();
+    const amount = parseFloat(document.getElementById('edit-amount').value);
+    const date = document.getElementById('edit-date').value;
+    const time = document.getElementById('edit-time').value;
+    const month = parseInt(document.getElementById('edit-month').value);
+    const year = parseInt(document.getElementById('edit-year').value);
+    
+    // Validar
+    if (!description || amount <= 0 || !date || !time || !month || !year) {
+      alert('Por favor, completa todos los campos correctamente.');
+      return;
+    }
+
+    // Validar rangos
+    if (month < 1 || month > 12) {
+      alert('El mes debe estar entre 1 y 12.');
+      return;
+    }
+    if (year < 1900 || year > 9999) {
+      alert('El año debe estar entre 1900 y 9999.');
+      return;
+    }
+
+    // Combinar fecha y hora
+    const dateTime = `${date} ${time}:00`;
+    
+    // Preparar datos para la API
+    const updateData = {
+      description,
+      category,
+      amount: amount.toString(),
+      date: dateTime,
+      month: month.toString(),
+      year: year.toString()
+    };
+
+    try {
+      // Llamar a la API
+      const result = await window.apiService.editTransaction(this.currentTransaction.id, updateData);
+      
+      if (result) {
+        // Cerrar modal
+        this.closeEditMode();
+        this.closeTransactionModal();
+        
+        // Recargar datos
+        await this.loadExpensesFromAPI();
+        this.renderExpensesList();
+        this.renderSummary();
+        
+        console.log('Transaction updated successfully');
+      } else {
+        alert('Error al actualizar la transacción.');
+      }
+    } catch (error) {
+      console.error('Error saving transaction:', error);
+      alert('Error al guardar los cambios.');
     }
   }
 }
