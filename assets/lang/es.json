@@ -10,6 +10,7 @@
   },
   "buttons": {
     "save": "Guardar",
+    "saving": "Guardando...",
     "viewMonth": "Ver mes",
     "backToHome": "Volver al inicio",
     "increase": "Aumentar",

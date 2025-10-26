@@ -5,6 +5,7 @@ class HomeSaveModal {
     this.modalStepState = { currentStepIndex: 1 };
     this.allDescriptions = [];
     this.allCategories = [];
+    this.isSaving = false; // Evitar múltiples clicks
   }
 
   // Inicializar modal
@@ -379,7 +380,11 @@ class HomeSaveModal {
 
   // Guardar transacción
   async saveTransaction() {
-    if (!window.apiService) return;
+    if (!window.apiService || this.isSaving) return;
+
+    // Prevenir múltiples clicks
+    this.isSaving = true;
+    this.updateSaveButtonsState(true);
 
     // Recoger datos del formulario
     const description = document.getElementById('save-description-input').value.trim();
@@ -393,16 +398,22 @@ class HomeSaveModal {
     // Validar
     if (!description || !category || amount <= 0 || !date || !time || !month || !year) {
       alert(window.i18n.t('messages.fillAllFields'));
+      this.isSaving = false;
+      this.updateSaveButtonsState(false);
       return;
     }
 
     // Validar rangos
     if (month < 1 || month > 12) {
       alert(window.i18n.t('messages.invalidMonth'));
+      this.isSaving = false;
+      this.updateSaveButtonsState(false);
       return;
     }
     if (year < 1900 || year > 9999) {
       alert(window.i18n.t('messages.invalidYear'));
+      this.isSaving = false;
+      this.updateSaveButtonsState(false);
       return;
     }
 
@@ -433,11 +444,10 @@ class HomeSaveModal {
           mainInput.value = '1.00';
         }
         
-        // Mostrar mensaje de éxito
-        console.log('Transaction created successfully:', result);
+        // Mostrar toast de éxito
+        this.showSuccessToast();
         
-        // Opcional: mostrar notificación visual
-        // TODO: Implementar sistema de notificaciones
+        console.log('Transaction created successfully:', result);
         
       } else {
         alert(window.i18n.t('messages.errorCreating'));
@@ -445,6 +455,44 @@ class HomeSaveModal {
     } catch (error) {
       console.error('Error saving transaction:', error);
       alert(window.i18n.t('messages.errorSaving'));
+    } finally {
+      // Restaurar estado de los botones
+      this.isSaving = false;
+      this.updateSaveButtonsState(false);
+    }
+  }
+
+  // Actualizar estado de los botones de guardar
+  updateSaveButtonsState(disabled) {
+    const confirmBtn = document.getElementById('confirm-save');
+    const confirmHeaderBtn = document.getElementById('confirm-save-header');
+    
+    [confirmBtn, confirmHeaderBtn].forEach(btn => {
+      if (btn) {
+        btn.disabled = disabled;
+        if (disabled) {
+          btn.classList.add('opacity-50', 'cursor-not-allowed');
+          btn.textContent = window.i18n ? window.i18n.t('buttons.saving') : 'Guardando...';
+        } else {
+          btn.classList.remove('opacity-50', 'cursor-not-allowed');
+          btn.textContent = window.i18n ? window.i18n.t('buttons.save') : 'Guardar';
+        }
+      }
+    });
+  }
+
+  // Mostrar toast de éxito
+  showSuccessToast() {
+    const toast = document.querySelector('#toast > div');
+    if (toast) {
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      
+      // Auto ocultar después de 2 segundos
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 2000);
     }
   }
 }
