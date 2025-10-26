@@ -22,7 +22,32 @@
   <!-- Título -->
   <div class="mb-6 text-center">
     <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100" data-i18n="breakdown.monthlyTitle">Desglose mensual</h1>
-    <p id="breakdown-period" class="text-slate-600 dark:text-slate-400 mt-1">Octubre 2025</p>
+    
+    <!-- Navegación por meses -->
+    <div class="flex items-center justify-center gap-3 mt-4">
+      <!-- Botones navegación izquierda -->
+      <div class="flex items-center gap-1">
+        <button id="breakdown-prevYearBtn" type="button" class="px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 shadow-sm ring-1 ring-slate-300/30 dark:ring-slate-700/50 transition-all hover:scale-105 active:scale-95">
+          <span>&lt;<span id="breakdown-prevYearLabel">2024</span></span>
+        </button>
+        <button id="breakdown-prevMonthBtn" type="button" class="px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 shadow-sm ring-1 ring-slate-300/30 dark:ring-slate-700/50 transition-all hover:scale-105 active:scale-95">
+          <span>&lt;<span id="breakdown-prevMonthLabel">Sep</span></span>
+        </button>
+      </div>
+
+      <!-- Período actual -->
+      <p id="breakdown-period" class="text-lg font-bold text-slate-700 dark:text-slate-200">Octubre 2025</p>
+
+      <!-- Botones navegación derecha -->
+      <div class="flex items-center gap-1">
+        <button id="breakdown-nextMonthBtn" type="button" class="px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 shadow-sm ring-1 ring-slate-300/30 dark:ring-slate-700/50 transition-all hover:scale-105 active:scale-95">
+          <span><span id="breakdown-nextMonthLabel">Nov</span>&gt;</span>
+        </button>
+        <button id="breakdown-nextYearBtn" type="button" class="px-3 py-1.5 text-sm font-medium rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 shadow-sm ring-1 ring-slate-300/30 dark:ring-slate-700/50 transition-all hover:scale-105 active:scale-95">
+          <span><span id="breakdown-nextYearLabel">2026</span>&gt;</span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Resumen del mes -->

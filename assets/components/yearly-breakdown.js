@@ -34,6 +34,9 @@ class YearlyBreakdownView {
     
     // Actualizar período mostrado
     this.updatePeriod();
+    
+    // Actualizar labels de navegación después de cargar todo
+    this.updateNavigationLabels();
   }
 
   // Cargar datos anuales desde la API
@@ -406,6 +409,72 @@ class YearlyBreakdownView {
           window.loadPage('breakdown');
         }
       });
+    }
+
+    // Configurar navegación por años
+    this.setupYearNavigation();
+  }
+
+  // Configurar navegación por años
+  setupYearNavigation() {
+    const prevYearBtn = document.getElementById('yearly-prevYearBtn');
+    const nextYearBtn = document.getElementById('yearly-nextYearBtn');
+
+    if (prevYearBtn) {
+      prevYearBtn.addEventListener('click', () => {
+        if (window.dateManager) {
+          window.dateManager.navigateToPrevYear();
+          this.reloadWithNewDate();
+        }
+      });
+    }
+
+    if (nextYearBtn) {
+      nextYearBtn.addEventListener('click', () => {
+        if (window.dateManager) {
+          window.dateManager.navigateToNextYear();
+          this.reloadWithNewDate();
+        }
+      });
+    }
+
+    // Actualizar labels de navegación
+    this.updateNavigationLabels();
+  }
+
+  // Recargar vista con nueva fecha
+  async reloadWithNewDate() {
+    const { month, year } = window.dateManager.getCurrentMonthYear();
+    
+    // Actualizar URL
+    const url = new URL(window.location);
+    url.searchParams.set('month', month);
+    url.searchParams.set('year', year);
+    window.history.pushState({}, '', url.toString());
+    
+    // Recargar datos y vista
+    await this.loadYearlyData();
+    this.renderYearSummary();
+    this.renderEndBalance();
+    this.renderCategoryBreakdown();
+    this.renderDescriptionBreakdown();
+    this.updatePeriod();
+    this.updateNavigationLabels();
+  }
+
+  // Actualizar labels de navegación
+  updateNavigationLabels() {
+    const { year } = window.dateManager.getCurrentMonthYear();
+    
+    const prevYearLabel = document.getElementById('yearly-prevYearLabel');
+    const nextYearLabel = document.getElementById('yearly-nextYearLabel');
+
+    if (prevYearLabel) {
+      prevYearLabel.textContent = year - 1;
+    }
+
+    if (nextYearLabel) {
+      nextYearLabel.textContent = year + 1;
     }
   }
 

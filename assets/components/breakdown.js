@@ -34,6 +34,9 @@ class BreakdownView {
     
     // Actualizar período mostrado
     this.updatePeriod();
+    
+    // Actualizar labels de navegación después de cargar todo
+    this.updateNavigationLabels();
   }
 
   // Cargar datos desde la API
@@ -401,6 +404,106 @@ class BreakdownView {
           window.loadPage('yearly-breakdown');
         }
       });
+    }
+
+    // Configurar navegación por meses
+    this.setupMonthNavigation();
+  }
+
+  // Configurar navegación por meses
+  setupMonthNavigation() {
+    const prevYearBtn = document.getElementById('breakdown-prevYearBtn');
+    const prevMonthBtn = document.getElementById('breakdown-prevMonthBtn');
+    const nextMonthBtn = document.getElementById('breakdown-nextMonthBtn');
+    const nextYearBtn = document.getElementById('breakdown-nextYearBtn');
+
+    if (prevYearBtn) {
+      prevYearBtn.addEventListener('click', () => {
+        if (window.dateManager) {
+          window.dateManager.navigateToPrevYear();
+          this.reloadWithNewDate();
+        }
+      });
+    }
+
+    if (prevMonthBtn) {
+      prevMonthBtn.addEventListener('click', () => {
+        if (window.dateManager) {
+          window.dateManager.navigateToPrevMonth();
+          this.reloadWithNewDate();
+        }
+      });
+    }
+
+    if (nextMonthBtn) {
+      nextMonthBtn.addEventListener('click', () => {
+        if (window.dateManager) {
+          window.dateManager.navigateToNextMonth();
+          this.reloadWithNewDate();
+        }
+      });
+    }
+
+    if (nextYearBtn) {
+      nextYearBtn.addEventListener('click', () => {
+        if (window.dateManager) {
+          window.dateManager.navigateToNextYear();
+          this.reloadWithNewDate();
+        }
+      });
+    }
+
+    // Actualizar labels de navegación
+    this.updateNavigationLabels();
+  }
+
+  // Recargar vista con nueva fecha
+  async reloadWithNewDate() {
+    const { month, year } = window.dateManager.getCurrentMonthYear();
+    
+    // Actualizar URL
+    const url = new URL(window.location);
+    url.searchParams.set('month', month);
+    url.searchParams.set('year', year);
+    window.history.pushState({}, '', url.toString());
+    
+    // Recargar datos y vista
+    await this.loadData();
+    this.renderMonthSummary();
+    this.renderEndBalance();
+    this.renderCategoryBreakdown();
+    this.renderDescriptionBreakdown();
+    this.updatePeriod();
+    this.updateNavigationLabels();
+  }
+
+  // Actualizar labels de navegación
+  updateNavigationLabels() {
+    const { month, year } = window.dateManager.getCurrentMonthYear();
+    
+    const prevYearLabel = document.getElementById('breakdown-prevYearLabel');
+    const prevMonthLabel = document.getElementById('breakdown-prevMonthLabel');
+    const nextMonthLabel = document.getElementById('breakdown-nextMonthLabel');
+    const nextYearLabel = document.getElementById('breakdown-nextYearLabel');
+
+    if (prevYearLabel) {
+      prevYearLabel.textContent = year - 1;
+    }
+
+    if (nextYearLabel) {
+      nextYearLabel.textContent = year + 1;
+    }
+
+    if (prevMonthLabel && window.i18n) {
+      const prevMonth = month === 1 ? 12 : month - 1;
+      const monthKey = Object.keys(window.i18n.translations[window.i18n.currentLanguage].months)[prevMonth - 1];
+      prevMonthLabel.textContent = window.i18n.t(`months.${monthKey}`).substring(0, 3);
+    }
+
+    if (nextMonthLabel && window.i18n) {
+      const nextMonth = month === 12 ? 1 : month + 1;
+      const monthKey = Object.keys(window.i18n.translations[window.i18n.currentLanguage].months)[nextMonth - 1];
+      nextMonthLabel.textContent = window.i18n.t(`months.${monthKey}`).substring(0, 3);
     }
   }
 
