@@ -5,7 +5,7 @@ class I18n {
     this.currentLanguage = null;
     this.translations = {};
     this.availableLanguages = [];
-    this.FALLBACK_LANGUAGES = ['es'];
+    this.FALLBACK_LANGUAGES = [import.meta.env.VITE_APP_LANG || 'es'];
   }
 
   async init() {
