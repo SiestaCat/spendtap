@@ -21,7 +21,8 @@ function initHomePage() {
       if (window.loadPage) {
         window.loadPage('month');
       } else {
-        alert('Aquí iría la vista mensual.');
+        const message = window.t('messages.monthViewPlaceholder');
+        alert(message);
       }
     });
   }

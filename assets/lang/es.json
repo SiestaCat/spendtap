@@ -1,0 +1,31 @@
+{
+  "app": {
+    "title": "SpendTap",
+    "currentMonth": "Octubre 2025"
+  },
+  "theme": {
+    "system": "Tema: Sistema",
+    "light": "Tema: Claro", 
+    "dark": "Tema: Oscuro"
+  },
+  "buttons": {
+    "save": "Guardar",
+    "viewMonth": "Ver mes",
+    "increase": "Aumentar",
+    "decrease": "Disminuir",
+    "changeStep": "Cambiar paso"
+  },
+  "labels": {
+    "amount": "Cantidad"
+  },
+  "messages": {
+    "saved": "Guardado",
+    "monthViewPlaceholder": "Aquí iría la vista mensual."
+  },
+  "steps": {
+    "cents": "0,10€",
+    "euro": "1€", 
+    "tenEuros": "10€",
+    "hundredEuros": "100€"
+  }
+}

@@ -50,6 +50,8 @@ class TemplateSystem {
     }
 
     // Dynamically load component scripts
+    await this.loadScript('/assets/components/i18n.js');
+    await this.loadScript('/assets/components/translation-updater.js');
     await this.loadScript('/assets/components/theme.js');
     await this.loadScript('/assets/components/step-buttons.js');
     await this.loadScript('/assets/components/plus-minus-buttons.js');
@@ -57,7 +59,17 @@ class TemplateSystem {
     await this.loadScript('/assets/components/home-page.js');
 
     // Wait a bit for script to execute and then initialize
-    setTimeout(() => {
+    setTimeout(async () => {
+      // Initialize i18n system first
+      if (window.i18n) {
+        await window.i18n.init();
+        
+        // Update all translations in DOM
+        if (window.updateTranslations) {
+          window.updateTranslations();
+        }
+      }
+      
       console.log('Trying to init theme, function available:', !!window.initTheme);
       if (window.initTheme) {
         window.initTheme();
