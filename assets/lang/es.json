@@ -32,6 +32,18 @@
     "transactionCreated": "Transacción creada exitosamente",
     "noCategory": "Sin categoría"
   },
+  "modal": {
+    "saveTransaction": "Guardar transacción",
+    "amount": "Cantidad",
+    "expense": "Es un gasto",
+    "category": "Categoría",
+    "categoryPlaceholder": "Escribir categoría...",
+    "description": "Descripción", 
+    "descriptionPlaceholder": "Escribir descripción...",
+    "date": "Fecha",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
   "steps": {
     "cents": "0,10€",
     "euro": "1€", 

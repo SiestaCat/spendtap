@@ -389,14 +389,18 @@ class HomeSaveModal {
     // Recoger datos del formulario
     const description = document.getElementById('save-description-input').value.trim();
     const category = document.getElementById('save-category-input').value.trim();
-    const amount = parseFloat(document.getElementById('modal-amount-input').value);
+    const rawAmount = parseFloat(document.getElementById('modal-amount-input').value);
+    const isExpense = document.getElementById('is-expense-checkbox').checked;
     const date = document.getElementById('save-date-input').value;
     const time = document.getElementById('save-time-input').value;
     const month = parseInt(document.getElementById('save-month-input').value);
     const year = parseInt(document.getElementById('save-year-input').value);
 
-    // Validar
-    if (!description || !category || amount <= 0 || !date || !time || !month || !year) {
+    // Aplicar signo según si es gasto o ingreso
+    const amount = isExpense ? -Math.abs(rawAmount) : Math.abs(rawAmount);
+
+    // Validar (ahora rawAmount debe ser > 0, no amount)
+    if (!description || !category || rawAmount <= 0 || !date || !time || !month || !year) {
       alert(window.i18n.t('messages.fillAllFields'));
       this.isSaving = false;
       this.updateSaveButtonsState(false);

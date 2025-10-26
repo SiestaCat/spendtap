@@ -32,6 +32,18 @@
     "transactionCreated": "Transaction created successfully",
     "noCategory": "No category"
   },
+  "modal": {
+    "saveTransaction": "Save transaction",
+    "amount": "Amount",
+    "expense": "Is an expense",
+    "category": "Category",
+    "categoryPlaceholder": "Enter category...",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter description...",
+    "date": "Date",
+    "save": "Save", 
+    "cancel": "Cancel"
+  },
   "steps": {
     "cents": "€0.10",
     "euro": "€1", 
