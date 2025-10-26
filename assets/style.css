@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@config "../tailwind.config.js";
+
 /* Suaviza los números del input en iOS */
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button { 
