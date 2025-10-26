@@ -136,5 +136,32 @@
     "oldest": "Oldest first",
     "highest": "Highest amount",
     "lowest": "Lowest amount"
+  },
+  "breakdown": {
+    "button": "Breakdown",
+    "monthlyTitle": "Monthly breakdown",
+    "yearlyTitle": "Yearly breakdown",
+    "yearlyButton": "Yearly breakdown",
+    "byCategory": "By category",
+    "byDescription": "By description",
+    "yearlyByCategory": "By category (Yearly)",
+    "yearlyByDescription": "By description (Yearly)",
+    "yearSummary": "Year summary",
+    "yearlySummary": "Yearly summary",
+    "loading": "Loading breakdown...",
+    "noData": "No data available",
+    "transactions": "transactions",
+    "transaction": "transaction"
+  },
+  "buttons": {
+    "save": "Save",
+    "viewMonth": "View month",
+    "backToHome": "Back to home",
+    "backToMonth": "Back to month",
+    "backToBreakdown": "Back to breakdown",
+    "increase": "Increase",
+    "decrease": "Decrease",
+    "changeStep": "Change step",
+    "options": "Options"
   }
 }

@@ -136,5 +136,32 @@
     "oldest": "Los más antiguos",
     "highest": "Los más caros",
     "lowest": "Los más baratos"
+  },
+  "breakdown": {
+    "button": "Desglose",
+    "monthlyTitle": "Desglose mensual",
+    "yearlyTitle": "Desglose anual",
+    "yearlyButton": "Desglose anual",
+    "byCategory": "Por categoría",
+    "byDescription": "Por descripción",
+    "yearlyByCategory": "Por categoría (Anual)",
+    "yearlyByDescription": "Por descripción (Anual)",
+    "yearSummary": "Resumen del año",
+    "yearlySummary": "Yearly summary",
+    "loading": "Cargando desglose...",
+    "noData": "No hay datos disponibles",
+    "transactions": "transacciones",
+    "transaction": "transacción"
+  },
+  "buttons": {
+    "save": "Guardar",
+    "viewMonth": "Ver mes",
+    "backToHome": "Volver al inicio",
+    "backToMonth": "Volver al mes",
+    "backToBreakdown": "Volver al desglose",
+    "increase": "Aumentar",
+    "decrease": "Disminuir",
+    "changeStep": "Cambiar paso",
+    "options": "Opciones"
   }
 }

@@ -64,6 +64,8 @@ class TemplateSystem {
     await this.loadScript('/assets/components/month-page.js');
     await this.loadScript('/assets/components/home-save-modal.js');
     await this.loadScript('/assets/components/home-page.js');
+    await this.loadScript('/assets/components/breakdown.js');
+    await this.loadScript('/assets/components/yearly-breakdown.js');
 
     // Wait a bit for script to execute and then initialize
     setTimeout(async () => {

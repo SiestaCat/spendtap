@@ -45,6 +45,57 @@ export const pages = {
         }
       };
     }
+  },
+
+  // Monthly breakdown view page
+  breakdown: {
+    title: null, // Dynamic title based on month/year
+    mainClass: 'items-start justify-start pt-8',
+    async load() {
+      const content = await templateSystem.loadTemplate('/pages/breakdown.html');
+      
+      // Get dynamic title
+      const { month, year } = window.dateManager ? window.dateManager.getCurrentMonthYear() : { month: 10, year: 2025 };
+      const monthName = window.dateManager ? window.dateManager.getMonthName(month) : 'Octubre';
+      const dynamicTitle = `Desglose ${monthName} ${year}`;
+      
+      return {
+        title: dynamicTitle,
+        content,
+        mainClass: this.mainClass,
+        onRender: () => {
+          // Initialize breakdown page functionality
+          if (window.initBreakdown) {
+            window.initBreakdown();
+          }
+        }
+      };
+    }
+  },
+
+  // Yearly breakdown view page
+  'yearly-breakdown': {
+    title: null, // Dynamic title based on year
+    mainClass: 'items-start justify-start pt-8',
+    async load() {
+      const content = await templateSystem.loadTemplate('/pages/yearly-breakdown.html');
+      
+      // Get dynamic title
+      const { year } = window.dateManager ? window.dateManager.getCurrentMonthYear() : { year: 2025 };
+      const dynamicTitle = `Desglose Anual ${year}`;
+      
+      return {
+        title: dynamicTitle,
+        content,
+        mainClass: this.mainClass,
+        onRender: () => {
+          // Initialize yearly breakdown page functionality
+          if (window.initYearlyBreakdown) {
+            window.initYearlyBreakdown();
+          }
+        }
+      };
+    }
   }
 };
 

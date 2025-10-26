@@ -1,0 +1,63 @@
+<div>
+  <!-- Botones de navegación -->
+  <div class="flex items-center justify-between mb-6">
+    <!-- Botón volver -->
+    <button id="backToBreakdownBtn" type="button" class="inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium ring-1 ring-slate-300 dark:ring-slate-700 bg-white dark:bg-slate-800 shadow hover:shadow-md transition">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+      <span data-i18n="buttons.backToBreakdown">Volver al desglose</span>
+    </button>
+  </div>
+
+  <!-- Título -->
+  <div class="mb-6 text-center">
+    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100" data-i18n="breakdown.yearlyTitle">Desglose anual</h1>
+    <p id="yearly-breakdown-period" class="text-slate-600 dark:text-slate-400 mt-1">2025</p>
+  </div>
+
+  <!-- Resumen anual -->
+  <div class="mb-8 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+    <h3 class="text-lg font-semibold mb-3" data-i18n="breakdown.yearlySummary">Yearly summary</h3>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="text-center">
+        <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="month.totalIncome">Total ingresos</p>
+        <p class="text-xl font-bold text-green-600" id="yearly-total-income">0,00€</p>
+      </div>
+      <div class="text-center">
+        <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="month.totalExpenses">Total gastos</p>
+        <p class="text-xl font-bold text-red-600" id="yearly-total-expenses">0,00€</p>
+      </div>
+      <div class="text-center">
+        <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="month.balance">Balance total</p>
+        <p class="text-xl font-bold" id="yearly-total-balance">0,00€</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desglose anual por categorías -->
+  <div class="mb-8">
+    <h2 class="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-100" data-i18n="breakdown.yearlyByCategory">Por categoría (Anual)</h2>
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm ring-1 ring-slate-200 dark:ring-slate-700 overflow-hidden">
+      <div id="yearly-category-breakdown" class="divide-y divide-slate-200 dark:divide-slate-700">
+        <!-- Los datos se cargarán dinámicamente -->
+        <div class="p-4 text-center text-slate-500">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-2"></div>
+          <p data-i18n="breakdown.loading">Cargando desglose...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desglose anual por descripción -->
+  <div class="mb-8">
+    <h2 class="text-xl font-semibold mb-4 text-slate-900 dark:text-slate-100" data-i18n="breakdown.yearlyByDescription">Por descripción (Anual)</h2>
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm ring-1 ring-slate-200 dark:ring-slate-700 overflow-hidden">
+      <div id="yearly-description-breakdown" class="divide-y divide-slate-200 dark:divide-slate-700">
+        <!-- Los datos se cargarán dinámicamente -->
+        <div class="p-4 text-center text-slate-500">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-2"></div>
+          <p data-i18n="breakdown.loading">Cargando desglose...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -846,6 +846,9 @@ class MonthView {
     
     // Configurar selector de ordenamiento
     this.setupSortSelector();
+    
+    // Configurar botón desglose
+    this.setupBreakdownButton();
   }
 
   // Configurar modal de copiar mes anterior
@@ -1538,6 +1541,25 @@ class MonthView {
       
       // Re-renderizar con nuevo ordenamiento
       this.renderExpensesList();
+    });
+  }
+
+  // Configurar botón desglose
+  setupBreakdownButton() {
+    const breakdownBtn = document.getElementById('breakdown-btn');
+    if (!breakdownBtn) return;
+
+    // Event listener para navegar al desglose
+    breakdownBtn.addEventListener('click', () => {
+      if (window.loadPage && window.dateManager) {
+        const { month, year } = window.dateManager.getCurrentMonthYear();
+        const url = new URL(window.location);
+        url.pathname = '/breakdown';
+        url.searchParams.set('month', month);
+        url.searchParams.set('year', year);
+        window.history.pushState({}, '', url.toString());
+        window.loadPage('breakdown');
+      }
     });
   }
 }
