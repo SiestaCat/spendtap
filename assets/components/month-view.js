@@ -493,21 +493,124 @@ class MonthView {
         this.descriptionsCache = await window.apiService.getAllDescriptions();
         this.categoriesCache = await window.apiService.getAllCategories();
         
-        // Poblar datalists
-        this.populateDatalist('descriptions-list', this.descriptionsCache);
-        this.populateDatalist('categories-list', this.categoriesCache);
+        // Configurar comboboxes editables
+        this.setupEditableCombobox('edit-description', 'edit-description-dropdown', this.descriptionsCache);
+        this.setupEditableCombobox('edit-category', 'edit-category-dropdown', this.categoriesCache);
       } catch (error) {
         console.error('Error loading edit data:', error);
       }
     }
   }
 
-  // Poblar datalist con opciones
-  populateDatalist(listId, options) {
-    const datalist = document.getElementById(listId);
-    if (datalist) {
-      datalist.innerHTML = options.map(option => `<option value="${option}"></option>`).join('');
-    }
+  // Crear combobox editable personalizado
+  setupEditableCombobox(inputId, dropdownId, options) {
+    const input = document.getElementById(inputId);
+    const dropdown = document.getElementById(dropdownId);
+    
+    if (!input || !dropdown) return;
+
+    let currentOptions = options;
+    let selectedIndex = -1;
+
+    // Función para filtrar y mostrar opciones
+    const showOptions = (filter = '') => {
+      const filteredOptions = currentOptions.filter(option => 
+        option.toLowerCase().includes(filter.toLowerCase())
+      );
+
+      if (filteredOptions.length === 0) {
+        dropdown.classList.add('hidden');
+        return;
+      }
+
+      dropdown.innerHTML = filteredOptions.map((option, index) => 
+        `<div class="px-4 py-2 cursor-pointer text-slate-900 dark:text-white hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors" data-option="${option}" data-index="${index}">
+          ${option}
+        </div>`
+      ).join('');
+
+      dropdown.classList.remove('hidden');
+      selectedIndex = -1;
+    };
+
+    // Función para ocultar dropdown
+    const hideOptions = () => {
+      dropdown.classList.add('hidden');
+      selectedIndex = -1;
+    };
+
+    // Función para seleccionar opción
+    const selectOption = (option) => {
+      input.value = option;
+      hideOptions();
+    };
+
+    // Eventos del input
+    input.addEventListener('input', (e) => {
+      showOptions(e.target.value);
+    });
+
+    input.addEventListener('focus', () => {
+      if (currentOptions.length > 0) {
+        showOptions(input.value);
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      const options = dropdown.querySelectorAll('[data-option]');
+      
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, options.length - 1);
+          updateSelection(options);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, -1);
+          updateSelection(options);
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (selectedIndex >= 0 && options[selectedIndex]) {
+            selectOption(options[selectedIndex].dataset.option);
+          }
+          break;
+        case 'Escape':
+          hideOptions();
+          break;
+      }
+    });
+
+    // Función para actualizar selección visual
+    const updateSelection = (options) => {
+      options.forEach((opt, index) => {
+        if (index === selectedIndex) {
+          opt.classList.add('bg-indigo-100', 'dark:bg-indigo-900/50');
+        } else {
+          opt.classList.remove('bg-indigo-100', 'dark:bg-indigo-900/50');
+        }
+      });
+    };
+
+    // Eventos del dropdown
+    dropdown.addEventListener('mousedown', (e) => {
+      e.preventDefault(); // Prevenir que el input pierda el foco
+    });
+
+    dropdown.addEventListener('click', (e) => {
+      const optionElement = e.target.closest('[data-option]');
+      if (optionElement) {
+        selectOption(optionElement.dataset.option);
+      }
+    });
+
+    // Ocultar cuando se hace click fuera
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+        hideOptions();
+      }
+    });
   }
 
   // Llenar formulario con datos actuales
