@@ -73,5 +73,10 @@
     "confirmDeleteAction": "Eliminar",
     "categoryPlaceholder": "Escribir categoría...",
     "descriptionPlaceholder": "Escribir descripción..."
+  },
+  "language": {
+    "selectLanguage": "Seleccionar idioma",
+    "spanish": "Español",
+    "english": "Inglés"
   }
 }

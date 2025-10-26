@@ -1,0 +1,82 @@
+{
+  "app": {
+    "title": "SpendTap",
+    "currentMonth": "October 2025"
+  },
+  "theme": {
+    "system": "Theme: System",
+    "light": "Theme: Light", 
+    "dark": "Theme: Dark"
+  },
+  "buttons": {
+    "save": "Save",
+    "viewMonth": "View month",
+    "backToHome": "Back to home",
+    "increase": "Increase",
+    "decrease": "Decrease",
+    "changeStep": "Change step"
+  },
+  "labels": {
+    "amount": "Amount"
+  },
+  "messages": {
+    "saved": "Saved",
+    "monthViewPlaceholder": "Monthly view would go here.",
+    "fillAllFields": "Please fill all fields correctly.",
+    "invalidMonth": "Month must be between 1 and 12.",
+    "invalidYear": "Year must be between 1900 and 9999.",
+    "errorSaving": "Error saving transaction.",
+    "errorCreating": "Error creating transaction.",
+    "transactionCreated": "Transaction created successfully",
+    "noCategory": "No category"
+  },
+  "steps": {
+    "cents": "€0.10",
+    "euro": "€1", 
+    "tenEuros": "€10",
+    "hundredEuros": "€100"
+  },
+  "months": {
+    "1": "January",
+    "2": "February",
+    "3": "March",
+    "4": "April",
+    "5": "May",
+    "6": "June",
+    "7": "July",
+    "8": "August",
+    "9": "September",
+    "10": "October",
+    "11": "November",
+    "12": "December"
+  },
+  "month": {
+    "summary": "Monthly summary",
+    "totalExpenses": "Total expenses",
+    "totalIncome": "Total income",
+    "balance": "Total balance"
+  },
+  "modal": {
+    "transactionDetails": "Transaction details",
+    "saveTransaction": "Save transaction",
+    "description": "Description",
+    "category": "Category", 
+    "amount": "Amount",
+    "date": "Date",
+    "type": "Type",
+    "delete": "Delete",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirmDelete": "Delete transaction?",
+    "confirmDeleteMessage": "This action cannot be undone.",
+    "confirmDeleteAction": "Delete",
+    "categoryPlaceholder": "Type category...",
+    "descriptionPlaceholder": "Type description..."
+  },
+  "language": {
+    "selectLanguage": "Select language",
+    "spanish": "Spanish",
+    "english": "English"
+  }
+}

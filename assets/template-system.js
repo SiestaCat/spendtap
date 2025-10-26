@@ -55,6 +55,7 @@ class TemplateSystem {
     await this.loadScript('/assets/components/api-service.js');
     await this.loadScript('/assets/components/date-manager.js');
     await this.loadScript('/assets/components/theme.js');
+    await this.loadScript('/assets/components/language-selector.js');
     await this.loadScript('/assets/components/step-buttons.js');
     await this.loadScript('/assets/components/plus-minus-buttons.js');
     await this.loadScript('/assets/components/save-button.js');
@@ -78,6 +79,12 @@ class TemplateSystem {
       console.log('Trying to init theme, function available:', !!window.initTheme);
       if (window.initTheme) {
         window.initTheme();
+      }
+      
+      // Initialize language selector
+      console.log('Trying to init language selector, function available:', !!window.initLanguageSelector);
+      if (window.initLanguageSelector) {
+        window.initLanguageSelector();
       }
 
       // Re-run any initialization scripts

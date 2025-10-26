@@ -123,12 +123,19 @@ class I18n {
   }
 
   // Cambiar idioma manualmente (para futuro uso)
-  async setLanguage(langCode) {
+  async setLanguage(langCode, reload = true) {
     if (this.availableLanguages.includes(langCode)) {
       await this.loadLanguage(langCode);
       
-      // Recargar la página para aplicar cambios
-      window.location.reload();
+      // Actualizar UI sin recargar por defecto
+      if (window.updateTranslations) {
+        window.updateTranslations();
+      }
+      
+      // Solo recargar si se solicita explícitamente
+      if (reload) {
+        window.location.reload();
+      }
     }
   }
 

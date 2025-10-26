@@ -1,6 +1,21 @@
 <header class="pt-4 text-center select-none relative">
   <h1 class="text-2xl font-semibold tracking-tight">SpendTap</h1>
 
+  <!-- Botones esquina superior -->
+  <!-- Botón idioma (esquina superior izquierda) -->
+  <div class="absolute top-4 left-0">
+    <button id="languageBtn" type="button" class="flex items-center justify-center size-10 rounded-full shadow-sm ring-1 ring-slate-300/70 dark:ring-slate-700/70 bg-white/70 dark:bg-slate-800/60 backdrop-blur hover:shadow-md hover:scale-105 hover:bg-white dark:hover:bg-slate-800 cursor-pointer transition-all duration-200">
+      <span id="languageIcon" class="inline-block">
+        <!-- Icono de idioma (globo) -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="w-5 h-5">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M2 12h20"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </span>
+    </button>
+  </div>
+
   <!-- Botón cambio de tema (esquina superior derecha) -->
   <div class="absolute top-4 right-0">
     <button id="themeBtn" type="button" class="flex items-center justify-center size-10 rounded-full shadow-sm ring-1 ring-slate-300/70 dark:ring-slate-700/70 bg-white/70 dark:bg-slate-800/60 backdrop-blur hover:shadow-md hover:scale-105 hover:bg-white dark:hover:bg-slate-800 cursor-pointer transition-all duration-200">

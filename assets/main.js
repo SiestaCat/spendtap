@@ -72,6 +72,9 @@ const STEP_VALUES = [
   { value: 100.00, label: '100€' }
 ];
 
+// Make STEP_VALUES globally available
+window.STEP_VALUES = STEP_VALUES;
+
 // Estado actual del paso (índice por defecto: 1€)
 let currentStepIndex = 1;
 
@@ -237,6 +240,11 @@ function initHomePage() {
   initStepButtons();
   initPlusMinusButtons();
   initSaveButton();
+  
+  // Initialize language selector
+  if (window.initLanguageSelector) {
+    window.initLanguageSelector();
+  }
 
   // Demo: Ver mes
   const viewMonthBtn = document.getElementById('viewMonthBtn');
