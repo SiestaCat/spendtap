@@ -21,28 +21,27 @@ export const pages = {
     }
   },
 
-  // Example: monthly view page (placeholder)
+  // Monthly view page
   month: {
-    title: 'Vista Mensual',
-    mainClass: 'items-start justify-start',
+    title: null, // Dynamic title based on month/year
+    mainClass: 'items-start justify-start pt-8',
     async load() {
+      const content = await templateSystem.loadTemplate('/pages/month.html');
+      
+      // Get dynamic title
+      const { month, year } = window.dateManager ? window.dateManager.getCurrentMonthYear() : { month: 10, year: 2025 };
+      const monthName = window.dateManager ? window.dateManager.getMonthName(month) : 'Octubre';
+      const dynamicTitle = `${monthName} ${year}`;
+      
       return {
-        title: this.title,
-        content: `
-          <div class="w-full">
-            <h2 class="text-xl font-semibold mb-4">Vista Mensual</h2>
-            <p class="text-slate-600 dark:text-slate-400 mb-4">Aquí irían los gastos del mes.</p>
-            <button onclick="navigateToHome()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition">
-              Volver al inicio
-            </button>
-          </div>
-        `,
+        title: dynamicTitle,
+        content,
         mainClass: this.mainClass,
         onRender: () => {
-          // Setup monthly view functionality
-          window.navigateToHome = () => {
-            loadPage('home');
-          };
+          // Initialize month view functionality
+          if (window.initMonthView) {
+            window.initMonthView();
+          }
         }
       };
     }

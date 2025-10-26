@@ -15,15 +15,12 @@ function initHomePage() {
     homeDate.classList.remove('hidden');
   }
 
-  // Demo: Ver mes
+  // Navegar a vista mensual
   const viewMonthBtn = document.getElementById('viewMonthBtn');
   if (viewMonthBtn) {
     viewMonthBtn.addEventListener('click', () => {
       if (window.loadPage) {
         window.loadPage('month');
-      } else {
-        const message = window.t('messages.monthViewPlaceholder');
-        alert(message);
       }
     });
   }
