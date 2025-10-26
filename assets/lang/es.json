@@ -48,5 +48,13 @@
     "totalExpenses": "Total gastos",
     "totalIncome": "Total ingresos",
     "balance": "Balance total"
+  },
+  "modal": {
+    "transactionDetails": "Detalles de la transacción",
+    "description": "Descripción",
+    "category": "Categoría", 
+    "amount": "Cantidad",
+    "date": "Fecha",
+    "type": "Tipo"
   }
 }

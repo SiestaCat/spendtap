@@ -150,8 +150,8 @@ class MonthView {
     const container = document.getElementById('expenses-list');
     if (!container) return;
 
-    container.innerHTML = this.expenses.map(item => `
-      <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
+    container.innerHTML = this.expenses.map((item, index) => `
+      <div class="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-sm ring-1 ring-slate-200 dark:ring-slate-700 cursor-pointer hover:shadow-md hover:scale-[1.01] transition-all" data-transaction-index="${index}">
         <div class="flex-1 min-w-0 pr-4">
           <div class="flex items-center justify-between mb-1">
             <p class="font-medium text-slate-900 dark:text-slate-100 truncate">${item.description}</p>
@@ -160,12 +160,79 @@ class MonthView {
           <div class="flex items-center justify-between">
             <span class="inline-block px-2 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-full truncate max-w-32">${this.getCategoryName(item.category)}</span>
             <p class="font-bold text-lg ${item.type === 'income' ? 'text-green-600' : 'text-red-600'} flex-shrink-0">
-              ${item.type === 'income' ? '+' : '-'}${item.amount.toFixed(2)}€
+              ${item.type === 'income' ? '+' : ''}${item.amount.toFixed(2)}€
             </p>
           </div>
         </div>
       </div>
     `).join('');
+
+    // Añadir event listeners para abrir modal
+    this.addClickHandlers();
+  }
+
+  // Añadir event listeners a los elementos de la lista
+  addClickHandlers() {
+    const transactionElements = document.querySelectorAll('[data-transaction-index]');
+    transactionElements.forEach(element => {
+      element.addEventListener('click', (e) => {
+        const index = parseInt(e.currentTarget.dataset.transactionIndex);
+        const transaction = this.expenses[index];
+        if (transaction) {
+          this.openTransactionModal(transaction);
+        }
+      });
+    });
+  }
+
+  // Abrir modal con detalles de la transacción
+  openTransactionModal(transaction) {
+    // Rellenar datos del modal
+    document.getElementById('modal-description').textContent = transaction.description;
+    document.getElementById('modal-category').textContent = this.getCategoryName(transaction.category);
+    document.getElementById('modal-id').textContent = transaction.id;
+    
+    // Formatear fecha completa
+    const fullDate = new Date(transaction.date);
+    const dateString = fullDate.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    document.getElementById('modal-date').textContent = dateString;
+    
+    // Cantidad con color
+    const amountElement = document.getElementById('modal-amount');
+    const sign = transaction.type === 'income' ? '+' : '';
+    const color = transaction.type === 'income' ? 'text-green-600' : 'text-red-600';
+    amountElement.textContent = `${sign}${transaction.amount.toFixed(2)}€`;
+    amountElement.className = `mt-1 text-2xl font-bold ${color}`;
+    
+    // Tipo
+    const typeElement = document.getElementById('modal-type');
+    const typeText = transaction.type === 'income' ? 'Ingreso' : 'Gasto';
+    const typeColor = transaction.type === 'income' ? 'text-green-600' : 'text-red-600';
+    typeElement.textContent = typeText;
+    typeElement.className = `mt-1 text-sm font-medium ${typeColor}`;
+    
+    // Mostrar modal
+    const modal = document.getElementById('transaction-modal');
+    modal.classList.remove('hidden');
+    
+    // Focus trap - enfocar el botón de cerrar
+    const closeButton = document.getElementById('close-modal');
+    if (closeButton) {
+      closeButton.focus();
+    }
+  }
+
+  // Cerrar modal
+  closeTransactionModal() {
+    const modal = document.getElementById('transaction-modal');
+    modal.classList.add('hidden');
   }
 
   // Calcular y mostrar resumen
@@ -236,6 +303,38 @@ class MonthView {
         }
       });
     }
+
+    // Configurar botones de cerrar modal
+    this.setupModalCloseHandlers();
+  }
+
+  // Configurar event listeners para cerrar modal
+  setupModalCloseHandlers() {
+    const modal = document.getElementById('transaction-modal');
+    const closeButton = document.getElementById('close-modal');
+    
+    // Cerrar con botón X
+    if (closeButton) {
+      closeButton.addEventListener('click', () => {
+        this.closeTransactionModal();
+      });
+    }
+    
+    // Cerrar al hacer click en el fondo
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          this.closeTransactionModal();
+        }
+      });
+    }
+    
+    // Cerrar con tecla Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        this.closeTransactionModal();
+      }
+    });
   }
 }
 

@@ -31,3 +31,59 @@
     <!-- Los gastos se cargarán dinámicamente -->
   </div>
 </div>
+
+<!-- Modal para detalles del gasto -->
+<div id="transaction-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <!-- Header del modal -->
+    <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+      <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100" data-i18n="modal.transactionDetails">Detalles de la transacción</h3>
+      <button id="close-modal" type="button" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- Contenido del modal -->
+    <div class="p-6">
+      <div class="space-y-4">
+        <!-- Descripción -->
+        <div>
+          <label class="block text-sm font-medium text-slate-600 dark:text-slate-400" data-i18n="modal.description">Descripción</label>
+          <p id="modal-description" class="mt-1 text-lg font-medium text-slate-900 dark:text-slate-100"></p>
+        </div>
+        
+        <!-- Categoría -->
+        <div>
+          <label class="block text-sm font-medium text-slate-600 dark:text-slate-400" data-i18n="modal.category">Categoría</label>
+          <span id="modal-category" class="mt-1 inline-block px-3 py-1 text-sm font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-full"></span>
+        </div>
+        
+        <!-- Cantidad -->
+        <div>
+          <label class="block text-sm font-medium text-slate-600 dark:text-slate-400" data-i18n="modal.amount">Cantidad</label>
+          <p id="modal-amount" class="mt-1 text-2xl font-bold"></p>
+        </div>
+        
+        <!-- Fecha -->
+        <div>
+          <label class="block text-sm font-medium text-slate-600 dark:text-slate-400" data-i18n="modal.date">Fecha</label>
+          <p id="modal-date" class="mt-1 text-lg text-slate-900 dark:text-slate-100"></p>
+        </div>
+        
+        <!-- Tipo -->
+        <div>
+          <label class="block text-sm font-medium text-slate-600 dark:text-slate-400" data-i18n="modal.type">Tipo</label>
+          <p id="modal-type" class="mt-1 text-sm font-medium"></p>
+        </div>
+        
+        <!-- ID (para debugging) -->
+        <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+          <label class="block text-sm font-medium text-slate-500 dark:text-slate-500">ID</label>
+          <p id="modal-id" class="mt-1 text-sm text-slate-500 dark:text-slate-500"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
