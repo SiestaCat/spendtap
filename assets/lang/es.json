@@ -21,7 +21,13 @@
   },
   "messages": {
     "saved": "Guardado",
-    "monthViewPlaceholder": "Aquí iría la vista mensual."
+    "monthViewPlaceholder": "Aquí iría la vista mensual.",
+    "fillAllFields": "Por favor, completa todos los campos correctamente.",
+    "invalidMonth": "El mes debe estar entre 1 y 12.",
+    "invalidYear": "El año debe estar entre 1900 y 9999.",
+    "errorSaving": "Error al guardar la transacción.",
+    "errorCreating": "Error al crear la transacción.",
+    "transactionCreated": "Transacción creada exitosamente"
   },
   "steps": {
     "cents": "0,10€",
@@ -51,6 +57,7 @@
   },
   "modal": {
     "transactionDetails": "Detalles de la transacción",
+    "saveTransaction": "Guardar transacción",
     "description": "Descripción",
     "category": "Categoría", 
     "amount": "Cantidad",
@@ -59,9 +66,11 @@
     "delete": "Eliminar",
     "edit": "Editar",
     "save": "Guardar",
+    "cancel": "Cancelar",
     "confirmDelete": "¿Eliminar transacción?",
     "confirmDeleteMessage": "Esta acción no se puede deshacer.",
-    "cancel": "Cancelar",
-    "confirmDeleteAction": "Eliminar"
+    "confirmDeleteAction": "Eliminar",
+    "categoryPlaceholder": "Escribir categoría...",
+    "descriptionPlaceholder": "Escribir descripción..."
   }
 }

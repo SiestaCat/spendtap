@@ -60,6 +60,7 @@ class TemplateSystem {
     await this.loadScript('/assets/components/save-button.js');
     await this.loadScript('/assets/components/month-view.js');
     await this.loadScript('/assets/components/month-page.js');
+    await this.loadScript('/assets/components/home-save-modal.js');
     await this.loadScript('/assets/components/home-page.js');
 
     // Wait a bit for script to execute and then initialize

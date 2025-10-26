@@ -37,3 +37,122 @@
     </button>
   </div>
 </div>
+
+<!-- Modal para guardar transacción -->
+<div id="save-transaction-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <!-- Header del modal -->
+    <div class="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+      <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100" data-i18n="modal.saveTransaction">Guardar transacción</h3>
+      <div class="flex items-center gap-2">
+        <button id="confirm-save-header" type="button" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors">
+          <span data-i18n="modal.save">Guardar</span>
+        </button>
+        <button id="close-save-modal" type="button" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Contenido del modal -->
+    <div class="p-6 space-y-6">
+      <!-- Cantidad (copiada del home) -->
+      <div>
+        <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-3" data-i18n="modal.amount">Cantidad</label>
+        <div class="flex flex-col items-center gap-3">
+          <div class="flex items-stretch gap-3">
+            <!-- Botón menos -->
+            <button id="modal-minus-btn" type="button" class="size-12 rounded-2xl grid place-items-center ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow hover:scale-[1.02] active:scale-95 transition">
+              <span class="text-lg font-bold">−</span>
+            </button>
+
+            <!-- Input number -->
+            <input id="modal-amount-input" type="number" inputmode="decimal" min="0" step="0.01" class="w-32 text-center text-2xl font-medium rounded-2xl ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500/60" />
+
+            <!-- Botón más -->
+            <button id="modal-plus-btn" type="button" class="size-12 rounded-2xl grid place-items-center ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow hover:scale-[1.02] active:scale-95 transition">
+              <span class="text-lg font-bold">+</span>
+            </button>
+          </div>
+
+          <!-- Botón selector de paso -->
+          <button id="modal-step-btn" type="button" class="w-32 py-1 rounded-2xl ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow hover:scale-[1.02] active:scale-95 transition flex items-center justify-center">
+            <span id="modal-step-label" class="text-sm font-bold">1€</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Categoría -->
+      <div>
+        <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-3" data-i18n="modal.category">Categoría</label>
+        <div class="relative mb-4">
+          <input id="save-category-input" type="text" class="w-full px-4 py-3 rounded-2xl ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow focus:outline-none focus:ring-2 focus:ring-indigo-500/60 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all" data-i18n-placeholder="modal.categoryPlaceholder" placeholder="Escribir categoría..." autocomplete="off">
+          <div id="save-category-dropdown" class="absolute top-full left-0 right-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg mt-1 max-h-64 overflow-auto z-50 hidden">
+            <!-- Opciones dinámicas -->
+          </div>
+        </div>
+        <!-- Últimas 5 categorías -->
+        <div id="recent-categories" class="flex flex-wrap gap-2">
+          <!-- Se llenarán dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div>
+        <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-3" data-i18n="modal.description">Descripción</label>
+        <div class="relative mb-4">
+          <input id="save-description-input" type="text" class="w-full px-4 py-3 rounded-2xl ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow focus:outline-none focus:ring-2 focus:ring-indigo-500/60 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all" data-i18n-placeholder="modal.descriptionPlaceholder" placeholder="Escribir descripción..." autocomplete="off">
+          <div id="save-description-dropdown" class="absolute top-full left-0 right-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg mt-1 max-h-64 overflow-auto z-50 hidden">
+            <!-- Opciones dinámicas -->
+          </div>
+        </div>
+        <!-- Últimas 5 descripciones -->
+        <div id="recent-descriptions" class="flex flex-wrap gap-2">
+          <!-- Se llenarán dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Fecha -->
+      <div>
+        <label class="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-3" data-i18n="modal.date">Fecha</label>
+        <div class="space-y-3">
+          <!-- Fecha y hora -->
+          <div class="grid grid-cols-2 gap-3">
+            <input id="save-date-input" type="date" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <input id="save-time-input" type="time" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+          <!-- Mes y año -->
+          <div class="grid grid-cols-2 gap-3">
+            <select id="save-month-input" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="1" data-i18n-option="months.1">Enero</option>
+              <option value="2" data-i18n-option="months.2">Febrero</option>
+              <option value="3" data-i18n-option="months.3">Marzo</option>
+              <option value="4" data-i18n-option="months.4">Abril</option>
+              <option value="5" data-i18n-option="months.5">Mayo</option>
+              <option value="6" data-i18n-option="months.6">Junio</option>
+              <option value="7" data-i18n-option="months.7">Julio</option>
+              <option value="8" data-i18n-option="months.8">Agosto</option>
+              <option value="9" data-i18n-option="months.9">Septiembre</option>
+              <option value="10" data-i18n-option="months.10">Octubre</option>
+              <option value="11" data-i18n-option="months.11">Noviembre</option>
+              <option value="12" data-i18n-option="months.12">Diciembre</option>
+            </select>
+            <input id="save-year-input" type="number" min="1900" max="9999" class="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Botones -->
+    <div class="flex gap-3 p-6 border-t border-slate-200 dark:border-slate-700">
+      <button id="cancel-save" type="button" class="flex-1 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+        <span data-i18n="modal.cancel">Cancelar</span>
+      </button>
+      <button id="confirm-save" type="button" class="flex-1 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors">
+        <span data-i18n="modal.save">Guardar</span>
+      </button>
+    </div>
+  </div>
+</div>

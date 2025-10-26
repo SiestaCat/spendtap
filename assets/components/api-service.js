@@ -184,6 +184,71 @@ class ApiService {
       return [];
     }
   }
+
+  // Obtener últimas categorías
+  async getLastCategories(limit = 5) {
+    try {
+      const url = `${this.baseUrl}/api/spent/last_categories?limit=${limit}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.categories || [];
+    } catch (error) {
+      console.error('Error fetching last categories:', error);
+      return [];
+    }
+  }
+
+  // Obtener últimas descripciones
+  async getLastDescriptions(limit = 5) {
+    try {
+      const url = `${this.baseUrl}/api/spent/last_descriptions?limit=${limit}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.descriptions || [];
+    } catch (error) {
+      console.error('Error fetching last descriptions:', error);
+      return [];
+    }
+  }
+
+  // Crear nueva transacción
+  async createTransaction(data) {
+    try {
+      const url = `${this.baseUrl}/api/spent/create`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('Create transaction response:', result);
+      return result;
+    } catch (error) {
+      console.error('Error creating transaction:', error);
+      return null;
+    }
+  }
 }
 
 // Instancia global

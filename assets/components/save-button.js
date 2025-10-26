@@ -1,19 +1,9 @@
 // === Lógica botón guardar ===
 
-let toastTimer;
-
-// Initialize save button
+// Initialize save button (now handled by home-save-modal.js)
 function initSaveButton() {
-  const saveBtn = document.getElementById('saveBtn');
-  const toast = document.querySelector('#toast > div');
-
-  if (saveBtn && toast) {
-    saveBtn.addEventListener('click', () => {
-      toast.classList.remove('hidden');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.add('hidden'), 1400);
-    });
-  }
+  // El botón guardar ahora es manejado por home-save-modal.js
+  // Este archivo se mantiene para compatibilidad pero no hace nada
 }
 
 // Export functions
