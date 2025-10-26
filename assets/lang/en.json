@@ -110,5 +110,15 @@
     "copy": "Copy Month",
     "success": "{count} transactions copied successfully",
     "error": "Error copying transactions"
+  },
+  "clearAll": {
+    "title": "Delete all transactions?",
+    "message": "This will permanently delete all transactions from this month.",
+    "warning": "This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Delete All",
+    "progress": "Deleting transactions...",
+    "success": "All transactions have been deleted",
+    "error": "Error deleting some transactions"
   }
 }

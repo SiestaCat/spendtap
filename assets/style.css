@@ -22,7 +22,8 @@ input[type=number] {
   #language-selector-modal,
   #currency-selector-modal,
   #save-transaction-modal,
-  #copy-month-modal {
+  #copy-month-modal,
+  #clear-all-confirm-modal {
     display: none !important;
   }
   

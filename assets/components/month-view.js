@@ -777,10 +777,8 @@ class MonthView {
 
     if (clearBtn) {
       clearBtn.addEventListener('click', () => {
-        if (confirm('¿Estás seguro de que quieres borrar todos los datos? Esta acción no se puede deshacer.')) {
-          alert('Clear All Data - Funcionalidad ficticia');
-        }
         optionsModal?.classList.add('hidden');
+        this.openClearAllModal();
       });
     }
 
@@ -793,6 +791,9 @@ class MonthView {
 
     // Configurar modal de copiar mes anterior
     this.setupCopyMonthModal();
+    
+    // Configurar modal de Clear All Data
+    this.setupClearAllModal();
   }
 
   // Configurar modal de copiar mes anterior
@@ -1072,6 +1073,196 @@ class MonthView {
       
       // Liberar el flag de progreso
       this.copyInProgress = false;
+    }
+  }
+
+  // Configurar modal de Clear All Data
+  setupClearAllModal() {
+    const clearModal = document.getElementById('clear-all-confirm-modal');
+    const closeClearBtn = document.getElementById('cancel-clear-all');
+    const confirmClearBtn = document.getElementById('confirm-clear-all');
+
+    // Cerrar modal
+    if (closeClearBtn) {
+      closeClearBtn.addEventListener('click', () => this.closeClearAllModal());
+    }
+
+    // Confirmar eliminación completa
+    if (confirmClearBtn) {
+      confirmClearBtn.addEventListener('click', () => this.confirmClearAllData());
+    }
+
+    // Cerrar modal al hacer click en el fondo
+    if (clearModal) {
+      clearModal.addEventListener('click', (e) => {
+        if (e.target === clearModal) {
+          this.closeClearAllModal();
+        }
+      });
+    }
+
+    // Cerrar con tecla Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && clearModal && !clearModal.classList.contains('hidden')) {
+        this.closeClearAllModal();
+      }
+    });
+  }
+
+  // Abrir modal de confirmación para Clear All Data
+  openClearAllModal() {
+    const clearModal = document.getElementById('clear-all-confirm-modal');
+    if (clearModal) {
+      clearModal.classList.remove('hidden');
+      
+      // Reset progress UI
+      this.resetClearProgress();
+      
+      // Focus en el botón cancelar para accesibilidad
+      const cancelBtn = document.getElementById('cancel-clear-all');
+      if (cancelBtn) {
+        cancelBtn.focus();
+      }
+    }
+  }
+
+  // Cerrar modal de confirmación para Clear All Data
+  closeClearAllModal() {
+    const clearModal = document.getElementById('clear-all-confirm-modal');
+    if (clearModal) {
+      clearModal.classList.add('hidden');
+    }
+  }
+
+  // Reset progress UI
+  resetClearProgress() {
+    const progressDiv = document.getElementById('clear-progress');
+    const progressBar = document.getElementById('clear-progress-bar');
+    const progressText = document.getElementById('clear-progress-text');
+    
+    if (progressDiv) {
+      progressDiv.classList.add('hidden');
+    }
+    if (progressBar) {
+      progressBar.style.width = '0%';
+    }
+    if (progressText) {
+      progressText.textContent = '0 / 0';
+    }
+  }
+
+  // Confirmar y ejecutar eliminación completa
+  async confirmClearAllData() {
+    if (!window.apiService || this.clearInProgress) return;
+    
+    // Marcar como en progreso
+    this.clearInProgress = true;
+
+    // Obtener todas las transacciones del mes actual
+    const { month, year } = window.dateManager.getCurrentMonthYear();
+    
+    try {
+      // Deshabilitar botones durante la operación
+      const cancelBtn = document.getElementById('cancel-clear-all');
+      const confirmBtn = document.getElementById('confirm-clear-all');
+      
+      if (cancelBtn) cancelBtn.disabled = true;
+      if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = window.i18n.t('clearAll.progress');
+      }
+
+      // Mostrar progreso
+      const progressDiv = document.getElementById('clear-progress');
+      if (progressDiv) {
+        progressDiv.classList.remove('hidden');
+      }
+
+      // Obtener todas las transacciones del mes actual
+      const transactions = await window.apiService.getMonthData(month, year);
+      const totalCount = transactions.length;
+
+      if (totalCount === 0) {
+        alert(window.i18n.t('clearAll.success'));
+        this.closeClearAllModal();
+        return;
+      }
+
+      // Eliminar cada transacción una por una
+      let deletedCount = 0;
+      let failedCount = 0;
+
+      for (let i = 0; i < transactions.length; i++) {
+        const transaction = transactions[i];
+        
+        try {
+          const success = await window.apiService.deleteTransaction(transaction.id);
+          
+          if (success) {
+            deletedCount++;
+          } else {
+            failedCount++;
+          }
+          
+          // Actualizar progreso
+          this.updateClearProgress(i + 1, totalCount, deletedCount, failedCount);
+          
+          // Pequeña pausa para no sobrecargar la API
+          await new Promise(resolve => setTimeout(resolve, 50));
+          
+        } catch (error) {
+          console.error(`Error deleting transaction ${transaction.id}:`, error);
+          failedCount++;
+          this.updateClearProgress(i + 1, totalCount, deletedCount, failedCount);
+        }
+      }
+
+      // Mostrar resultado final
+      if (failedCount === 0) {
+        alert(window.i18n.t('clearAll.success'));
+      } else {
+        alert(`${window.i18n.t('clearAll.error')} (${failedCount} transacciones no pudieron ser eliminadas)`);
+      }
+
+      // Cerrar modal
+      this.closeClearAllModal();
+
+      // Recargar datos de la vista
+      await this.loadExpensesFromAPI();
+      this.renderExpensesList();
+      this.renderSummary();
+
+    } catch (error) {
+      console.error('Error during clear all operation:', error);
+      alert(window.i18n.t('clearAll.error'));
+    } finally {
+      // Rehabilitar botones
+      const cancelBtn = document.getElementById('cancel-clear-all');
+      const confirmBtn = document.getElementById('confirm-clear-all');
+      
+      if (cancelBtn) cancelBtn.disabled = false;
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = window.i18n.t('clearAll.confirm');
+      }
+      
+      // Liberar el flag de progreso
+      this.clearInProgress = false;
+    }
+  }
+
+  // Actualizar progreso durante la eliminación
+  updateClearProgress(processed, total, deleted, failed) {
+    const progressBar = document.getElementById('clear-progress-bar');
+    const progressText = document.getElementById('clear-progress-text');
+    
+    if (progressBar) {
+      const percentage = (processed / total) * 100;
+      progressBar.style.width = `${percentage}%`;
+    }
+    
+    if (progressText) {
+      progressText.textContent = `${processed} / ${total}`;
     }
   }
 }

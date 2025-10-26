@@ -248,51 +248,7 @@
     <!-- Contenido del modal -->
     <div class="p-6">
       <div class="space-y-3">
-        <!-- Opción 1: Export Data -->
-        <button id="export-data" type="button" class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-left">
-          <div class="flex items-center justify-center size-10 rounded-lg bg-blue-100 dark:bg-blue-900/20">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="w-5 h-5 text-blue-600">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="7,10 12,15 17,10"/>
-              <line x1="12" x2="12" y1="15" y2="3"/>
-            </svg>
-          </div>
-          <div>
-            <p class="font-medium text-slate-900 dark:text-slate-100" data-i18n="options.exportData">Export Data</p>
-            <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="options.exportDataDesc">Download transactions as CSV</p>
-          </div>
-        </button>
-        
-        <!-- Opción 2: Import Data -->
-        <button id="import-data" type="button" class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-left">
-          <div class="flex items-center justify-center size-10 rounded-lg bg-green-100 dark:bg-green-900/20">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="w-5 h-5 text-green-600">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17,8 12,3 7,8"/>
-              <line x1="12" x2="12" y1="3" y2="15"/>
-            </svg>
-          </div>
-          <div>
-            <p class="font-medium text-slate-900 dark:text-slate-100" data-i18n="options.importData">Import Data</p>
-            <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="options.importDataDesc">Upload CSV file</p>
-          </div>
-        </button>
-        
-        <!-- Opción 3: Statistics -->
-        <button id="view-stats" type="button" class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-left">
-          <div class="flex items-center justify-center size-10 rounded-lg bg-purple-100 dark:bg-purple-900/20">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="w-5 h-5 text-purple-600">
-              <path d="M3 3v18h18"/>
-              <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
-            </svg>
-          </div>
-          <div>
-            <p class="font-medium text-slate-900 dark:text-slate-100" data-i18n="options.statistics">Statistics</p>
-            <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="options.statisticsDesc">View detailed reports</p>
-          </div>
-        </button>
-        
-        <!-- Opción 4: Copy Previous Month -->
+        <!-- Opción 1: Copy Previous Month -->
         <button id="copy-month" type="button" class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-left">
           <div class="flex items-center justify-center size-10 rounded-lg bg-orange-100 dark:bg-orange-900/20">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="w-5 h-5 text-orange-600">
@@ -306,7 +262,7 @@
           </div>
         </button>
         
-        <!-- Opción 5: Print -->
+        <!-- Opción 2: Print -->
         <button id="print-page" type="button" class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-left">
           <div class="flex items-center justify-center size-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/20">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="w-5 h-5 text-indigo-600">
@@ -321,7 +277,7 @@
           </div>
         </button>
         
-        <!-- Opción 5: Clear All Data -->
+        <!-- Opción 3: Clear All Data -->
         <button id="clear-data" type="button" class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-left">
           <div class="flex items-center justify-center size-10 rounded-lg bg-red-100 dark:bg-red-900/20">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="w-5 h-5 text-red-600">
@@ -390,6 +346,45 @@
         </button>
         <button id="confirm-copy-month" type="button" class="flex-1 px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors">
           <span data-i18n="copyMonth.copy">Copy Month</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación para Clear All Data -->
+<div id="clear-all-confirm-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-sm w-full mx-4">
+    <!-- Header del modal de confirmación -->
+    <div class="p-6 text-center">
+      <div class="mx-auto flex items-center justify-center size-12 rounded-full bg-red-100 dark:bg-red-900/20 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6 text-red-600">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2" data-i18n="clearAll.title">¿Borrar todas las transacciones?</h3>
+      <p class="text-sm text-slate-600 dark:text-slate-400 mb-2" data-i18n="clearAll.message">Esto eliminará permanentemente todas las transacciones de este mes.</p>
+      <p class="text-sm font-medium text-red-600 dark:text-red-400 mb-6" data-i18n="clearAll.warning">Esta acción no se puede deshacer.</p>
+      
+      <!-- Mostrar progreso durante la eliminación -->
+      <div id="clear-progress" class="hidden mb-4">
+        <div class="text-sm text-slate-600 dark:text-slate-400 mb-2">
+          <span data-i18n="clearAll.progress">Eliminando transacciones...</span>
+        </div>
+        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+          <div id="clear-progress-bar" class="bg-red-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <span id="clear-progress-text">0 / 0</span>
+        </div>
+      </div>
+      
+      <div class="flex gap-3">
+        <button id="cancel-clear-all" type="button" class="flex-1 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+          <span data-i18n="clearAll.cancel">Cancelar</span>
+        </button>
+        <button id="confirm-clear-all" type="button" class="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">
+          <span data-i18n="clearAll.confirm">Borrar todo</span>
         </button>
       </div>
     </div>

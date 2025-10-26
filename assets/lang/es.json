@@ -110,5 +110,15 @@
     "copy": "Copiar mes",
     "success": "Se copiaron {count} transacciones exitosamente",
     "error": "Error al copiar las transacciones"
+  },
+  "clearAll": {
+    "title": "¿Borrar todas las transacciones?",
+    "message": "Esto eliminará permanentemente todas las transacciones de este mes.",
+    "warning": "Esta acción no se puede deshacer.",
+    "cancel": "Cancelar",
+    "confirm": "Borrar todo",
+    "progress": "Eliminando transacciones...",
+    "success": "Todas las transacciones han sido eliminadas",
+    "error": "Error al eliminar algunas transacciones"
   }
 }
