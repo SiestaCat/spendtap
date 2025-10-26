@@ -7,15 +7,29 @@ class ApiService {
   }
 
   async loadConfig() {
-    try {
-      const response = await fetch('/api/config');
-      this.config = await response.json();
-      this.baseUrl = this.config.VITE_API_BASE_URL || 'http://localhost:8000';
-      this.token = this.config.VITE_API_TOKEN || '';
-    } catch (error) {
-      console.warn('Failed to load runtime config, using defaults:', error);
-      this.baseUrl = 'http://localhost:8000';
-      this.token = '';
+    // Detectar si estamos en modo desarrollo
+    const isDev = import.meta.env?.VITE_DEV === '1';
+    
+    if (isDev) {
+      // En desarrollo, usar variables de entorno de Vite directamente
+      console.log('Development mode detected, using Vite env vars');
+      this.baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+      this.token = import.meta.env.VITE_API_TOKEN || '';
+      console.log('Config loaded:', { baseUrl: this.baseUrl, hasToken: !!this.token });
+    } else {
+      // En producción, usar el endpoint runtime
+      try {
+        console.log('Production mode, fetching runtime config');
+        const response = await fetch('/api/config');
+        this.config = await response.json();
+        this.baseUrl = this.config.VITE_API_BASE_URL || 'http://localhost:8000';
+        this.token = this.config.VITE_API_TOKEN || '';
+        console.log('Runtime config loaded:', { baseUrl: this.baseUrl, hasToken: !!this.token });
+      } catch (error) {
+        console.warn('Failed to load runtime config, using defaults:', error);
+        this.baseUrl = 'http://localhost:8000';
+        this.token = '';
+      }
     }
   }
 
