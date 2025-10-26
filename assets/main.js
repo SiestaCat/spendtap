@@ -59,19 +59,71 @@ themeBtn.addEventListener('click', () => {
 const minusBtn = document.getElementById('minusBtn');
 const plusBtn = document.getElementById('plusBtn');
 const numberInput = document.getElementById('numberInput');
+const stepBtn = document.getElementById('stepBtn');
+const stepLabel = document.getElementById('stepLabel');
 
-minusBtn.addEventListener('click', () => {
-  const step = Number(numberInput.step) || 1;
+let intervalId = null;
+
+// Configuración de pasos disponibles
+const STEP_VALUES = [
+  { value: 0.10, label: '0,10€' },
+  { value: 1, label: '1€' },
+  { value: 10, label: '10€' },
+  { value: 100, label: '100€' }
+];
+
+// Estado actual del paso (índice por defecto: 1€)
+let currentStepIndex = 1;
+
+const getCurrentStep = () => STEP_VALUES[currentStepIndex].value;
+
+const updateValue = (increment) => {
+  const step = getCurrentStep();
   const min = numberInput.min === '' ? -Infinity : Number(numberInput.min);
-  const val = Number(numberInput.value || 0) - step;
-  numberInput.value = Math.max(val, min);
+  const currentVal = Number(numberInput.value || 0);
+  const newVal = increment ? currentVal + step : currentVal - step;
+  numberInput.value = Math.max(newVal, min).toFixed(2);
+};
+
+const startInterval = (increment) => {
+  updateValue(increment);
+  intervalId = setInterval(() => updateValue(increment), 100);
+};
+
+const stopInterval = () => {
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+};
+
+// Cambiar paso al hacer clic en el botón selector
+stepBtn.addEventListener('click', () => {
+  currentStepIndex = (currentStepIndex + 1) % STEP_VALUES.length;
+  stepLabel.textContent = STEP_VALUES[currentStepIndex].label;
 });
 
-plusBtn.addEventListener('click', () => {
-  const step = Number(numberInput.step) || 1;
-  const val = Number(numberInput.value || 0) + step;
-  numberInput.value = val;
+// Eventos para botón menos
+minusBtn.addEventListener('mousedown', () => startInterval(false));
+minusBtn.addEventListener('mouseup', stopInterval);
+minusBtn.addEventListener('mouseleave', stopInterval);
+minusBtn.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  startInterval(false);
 });
+minusBtn.addEventListener('touchend', stopInterval);
+minusBtn.addEventListener('touchcancel', stopInterval);
+
+// Eventos para botón más
+plusBtn.addEventListener('mousedown', () => startInterval(true));
+plusBtn.addEventListener('mouseup', stopInterval);
+plusBtn.addEventListener('mouseleave', stopInterval);
+plusBtn.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  startInterval(true);
+});
+plusBtn.addEventListener('touchend', stopInterval);
+plusBtn.addEventListener('touchcancel', stopInterval);
 
 // === Guardar (toast) ===
 const saveBtn = document.getElementById('saveBtn');
