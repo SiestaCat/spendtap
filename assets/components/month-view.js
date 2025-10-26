@@ -249,6 +249,9 @@ class MonthView {
 
     // Configurar botones de cerrar modal
     this.setupModalCloseHandlers();
+    
+    // Configurar botón de opciones
+    this.setupOptionsButton();
   }
 
   // Configurar event listeners para cerrar modal
@@ -684,6 +687,101 @@ class MonthView {
       console.error('Error saving transaction:', error);
       alert('Error al guardar los cambios.');
     }
+  }
+
+  // Configurar botón de opciones
+  setupOptionsButton() {
+    const optionsBtn = document.getElementById('optionsBtn');
+    const optionsModal = document.getElementById('options-modal');
+    const closeOptionsBtn = document.getElementById('close-options');
+
+    // Abrir modal de opciones
+    if (optionsBtn) {
+      optionsBtn.addEventListener('click', () => {
+        if (optionsModal) {
+          optionsModal.classList.remove('hidden');
+          
+          // Focus en el botón de cerrar
+          if (closeOptionsBtn) {
+            closeOptionsBtn.focus();
+          }
+        }
+      });
+    }
+
+    // Cerrar modal de opciones
+    if (closeOptionsBtn) {
+      closeOptionsBtn.addEventListener('click', () => {
+        if (optionsModal) {
+          optionsModal.classList.add('hidden');
+        }
+      });
+    }
+
+    // Cerrar modal al hacer click en el fondo
+    if (optionsModal) {
+      optionsModal.addEventListener('click', (e) => {
+        if (e.target === optionsModal) {
+          optionsModal.classList.add('hidden');
+        }
+      });
+    }
+
+    // Event listeners para las opciones ficticias
+    const exportBtn = document.getElementById('export-data');
+    const importBtn = document.getElementById('import-data');
+    const statsBtn = document.getElementById('view-stats');
+    const printBtn = document.getElementById('print-page');
+    const clearBtn = document.getElementById('clear-data');
+
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => {
+        alert('Export Data - Funcionalidad ficticia');
+        optionsModal?.classList.add('hidden');
+      });
+    }
+
+    if (importBtn) {
+      importBtn.addEventListener('click', () => {
+        alert('Import Data - Funcionalidad ficticia');
+        optionsModal?.classList.add('hidden');
+      });
+    }
+
+    if (statsBtn) {
+      statsBtn.addEventListener('click', () => {
+        alert('Statistics - Funcionalidad ficticia');
+        optionsModal?.classList.add('hidden');
+      });
+    }
+
+    if (printBtn) {
+      printBtn.addEventListener('click', () => {
+        // Cerrar modal primero
+        optionsModal?.classList.add('hidden');
+        
+        // Imprimir la página después de un pequeño delay para que se cierre el modal
+        setTimeout(() => {
+          window.print();
+        }, 100);
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (confirm('¿Estás seguro de que quieres borrar todos los datos? Esta acción no se puede deshacer.')) {
+          alert('Clear All Data - Funcionalidad ficticia');
+        }
+        optionsModal?.classList.add('hidden');
+      });
+    }
+
+    // Cerrar con tecla Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && optionsModal && !optionsModal.classList.contains('hidden')) {
+        optionsModal.classList.add('hidden');
+      }
+    });
   }
 }
 

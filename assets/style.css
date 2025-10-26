@@ -12,3 +12,125 @@ input[type=number]::-webkit-inner-spin-button {
 input[type=number] { 
   -moz-appearance: textfield; 
 }
+
+/* Estilos para impresión */
+@media print {
+  /* Ocultar solo modales específicos al imprimir */
+  #options-modal,
+  #transaction-modal,
+  #delete-confirm-modal,
+  #language-selector-modal,
+  #currency-selector-modal,
+  #save-transaction-modal {
+    display: none !important;
+  }
+  
+  /* Ajustes generales para impresión */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  /* Título principal */
+  h1 {
+    color: black !important;
+    font-size: 18pt;
+    font-weight: bold;
+    margin-bottom: 20pt;
+  }
+  
+  /* Botones para impresión - convertir a texto simple */
+  button {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    padding: 4pt 8pt !important;
+    font-size: 10pt !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+  
+  /* Resumen del mes */
+  .bg-slate-50,
+  .dark\\:bg-slate-800\\/50 {
+    background: #f8f9fa !important;
+    border: 1px solid #ddd !important;
+  }
+  
+  /* Lista de transacciones - asegurar que sea visible */
+  .bg-white,
+  .dark\\:bg-slate-800 {
+    background: white !important;
+    border: 1px solid #ddd !important;
+    margin-bottom: 8pt;
+    padding: 8pt !important;
+  }
+  
+  /* Contenedor de la lista de gastos */
+  #expenses-list {
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  /* Elementos individuales de transacciones */
+  [data-transaction-index] {
+    display: flex !important;
+    visibility: visible !important;
+    background: white !important;
+    border: 1px solid #ddd !important;
+    margin-bottom: 8pt;
+    padding: 8pt !important;
+    break-inside: avoid;
+  }
+  
+  /* Colores para texto de cantidades */
+  .text-green-600 {
+    color: #059669 !important;
+  }
+  
+  .text-red-600 {
+    color: #dc2626 !important;
+  }
+  
+  /* Texto normal */
+  .text-slate-900,
+  .dark\\:text-slate-100 {
+    color: black !important;
+  }
+  
+  .text-slate-500,
+  .text-slate-600,
+  .text-slate-400,
+  .dark\\:text-slate-400 {
+    color: #666 !important;
+  }
+  
+  /* Eliminar sombras pero mantener estructura */
+  .shadow,
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+  
+  /* Asegurar que todo el contenido sea visible */
+  * {
+    color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  
+  /* Evitar saltos de página en elementos importantes */
+  h1, h2, h3 {
+    break-after: avoid;
+  }
+  
+  /* Asegurar que el contenido principal sea visible */
+  main {
+    display: block !important;
+    visibility: visible !important;
+  }
+}

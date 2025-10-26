@@ -14,7 +14,8 @@
     "backToHome": "Back to home",
     "increase": "Increase",
     "decrease": "Decrease",
-    "changeStep": "Change step"
+    "changeStep": "Change step",
+    "options": "Options"
   },
   "labels": {
     "amount": "Amount"
@@ -84,5 +85,18 @@
     "euro": "Euro (EUR)",
     "dollar": "Dollar (USD)",
     "pound": "Pound (GBP)"
+  },
+  "options": {
+    "title": "Options",
+    "exportData": "Export Data",
+    "exportDataDesc": "Download transactions as CSV",
+    "importData": "Import Data",
+    "importDataDesc": "Upload CSV file",
+    "statistics": "Statistics",
+    "statisticsDesc": "View detailed reports",
+    "printPage": "Print",
+    "printPageDesc": "Print current page",
+    "clearData": "Clear All Data",
+    "clearDataDesc": "Remove all transactions"
   }
 }

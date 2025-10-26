@@ -14,7 +14,8 @@
     "backToHome": "Volver al inicio",
     "increase": "Aumentar",
     "decrease": "Disminuir",
-    "changeStep": "Cambiar paso"
+    "changeStep": "Cambiar paso",
+    "options": "Opciones"
   },
   "labels": {
     "amount": "Cantidad"
@@ -84,5 +85,18 @@
     "euro": "Euro (EUR)",
     "dollar": "Dólar (USD)",
     "pound": "Libra (GBP)"
+  },
+  "options": {
+    "title": "Opciones",
+    "exportData": "Exportar datos",
+    "exportDataDesc": "Descargar transacciones como CSV",
+    "importData": "Importar datos",
+    "importDataDesc": "Subir archivo CSV",
+    "statistics": "Estadísticas",
+    "statisticsDesc": "Ver reportes detallados",
+    "printPage": "Imprimir",
+    "printPageDesc": "Imprimir página actual",
+    "clearData": "Borrar todos los datos",
+    "clearDataDesc": "Eliminar todas las transacciones"
   }
 }
