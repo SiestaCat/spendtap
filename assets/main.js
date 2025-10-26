@@ -93,6 +93,7 @@ if (!window.stepState) {
 const getCurrentStep = () => STEP_VALUES[window.stepState?.currentStepIndex || 1].value;
 
 const updateValue = (increment) => {
+  if (!numberInput) return;
   const step = getCurrentStep();
   const min = numberInput.min === '' ? -Infinity : Number(numberInput.min);
   const currentVal = Number(numberInput.value || 0);
@@ -113,43 +114,51 @@ const stopInterval = () => {
 };
 
 // Cambiar paso al hacer clic en el botón selector
-stepBtn.addEventListener('click', () => {
-  currentStepIndex = (currentStepIndex + 1) % STEP_VALUES.length;
-  stepLabel.textContent = STEP_VALUES[currentStepIndex].label;
-});
+if (stepBtn && stepLabel) {
+  stepBtn.addEventListener('click', () => {
+    currentStepIndex = (currentStepIndex + 1) % STEP_VALUES.length;
+    stepLabel.textContent = STEP_VALUES[currentStepIndex].label;
+  });
+}
 
 // Eventos para botón menos
-minusBtn.addEventListener('mousedown', () => startInterval(false));
-minusBtn.addEventListener('mouseup', stopInterval);
-minusBtn.addEventListener('mouseleave', stopInterval);
-minusBtn.addEventListener('touchstart', (e) => {
-  e.preventDefault();
-  startInterval(false);
-});
-minusBtn.addEventListener('touchend', stopInterval);
-minusBtn.addEventListener('touchcancel', stopInterval);
+if (minusBtn) {
+  minusBtn.addEventListener('mousedown', () => startInterval(false));
+  minusBtn.addEventListener('mouseup', stopInterval);
+  minusBtn.addEventListener('mouseleave', stopInterval);
+  minusBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startInterval(false);
+  });
+  minusBtn.addEventListener('touchend', stopInterval);
+  minusBtn.addEventListener('touchcancel', stopInterval);
+}
 
 // Eventos para botón más
-plusBtn.addEventListener('mousedown', () => startInterval(true));
-plusBtn.addEventListener('mouseup', stopInterval);
-plusBtn.addEventListener('mouseleave', stopInterval);
-plusBtn.addEventListener('touchstart', (e) => {
-  e.preventDefault();
-  startInterval(true);
-});
-plusBtn.addEventListener('touchend', stopInterval);
-plusBtn.addEventListener('touchcancel', stopInterval);
+if (plusBtn) {
+  plusBtn.addEventListener('mousedown', () => startInterval(true));
+  plusBtn.addEventListener('mouseup', stopInterval);
+  plusBtn.addEventListener('mouseleave', stopInterval);
+  plusBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startInterval(true);
+  });
+  plusBtn.addEventListener('touchend', stopInterval);
+  plusBtn.addEventListener('touchcancel', stopInterval);
+}
 
 // === Guardar (toast) ===
 const saveBtn = document.getElementById('saveBtn');
 const toast = document.querySelector('#toast > div');
 let toastTimer;
 
-saveBtn.addEventListener('click', () => {
-  toast.classList.remove('hidden');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.add('hidden'), 1400);
-});
+if (saveBtn && toast) {
+  saveBtn.addEventListener('click', () => {
+    toast.classList.remove('hidden');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.add('hidden'), 1400);
+  });
+}
 
 // Initialize theme functionality
 function initTheme() {
