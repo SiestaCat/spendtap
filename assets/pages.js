@@ -66,6 +66,13 @@ export function initRouter() {
   const pageName = path === '/' || path === '/home' ? 'home' : path.slice(1);
   loadPage(pageName);
 
+  // Listen for browser back/forward buttons
+  window.addEventListener('popstate', () => {
+    const currentPath = window.location.pathname;
+    const currentPageName = currentPath === '/' || currentPath === '/home' ? 'home' : currentPath.slice(1);
+    loadPage(currentPageName);
+  });
+
   // Make loadPage globally available
   window.loadPage = loadPage;
 }
