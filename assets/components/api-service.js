@@ -2,8 +2,25 @@
 
 class ApiService {
   constructor() {
-    this.baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-    this.token = import.meta.env.VITE_API_TOKEN || '';
+    this.config = null;
+    this.initPromise = this.loadConfig();
+  }
+
+  async loadConfig() {
+    try {
+      const response = await fetch('/api/config');
+      this.config = await response.json();
+      this.baseUrl = this.config.VITE_API_BASE_URL || 'http://localhost:8000';
+      this.token = this.config.VITE_API_TOKEN || '';
+    } catch (error) {
+      console.warn('Failed to load runtime config, using defaults:', error);
+      this.baseUrl = 'http://localhost:8000';
+      this.token = '';
+    }
+  }
+
+  async init() {
+    await this.initPromise;
   }
 
   // Headers por defecto
@@ -21,6 +38,7 @@ class ApiService {
 
   // Obtener gastos por mes y año usando el endpoint correcto
   async getExpenses(month, year, categories = []) {
+    await this.init();
     try {
       let url = `${this.baseUrl}/api/spent/filter?month=${month}&year=${year}`;
       
@@ -76,6 +94,7 @@ class ApiService {
 
   // Obtener todos los datos de un mes (gastos e ingresos detectados automáticamente)
   async getMonthData(month, year, categories = []) {
+    await this.init();
     try {
       const expenses = await this.getExpenses(month, year, categories);
 
@@ -108,6 +127,7 @@ class ApiService {
 
   // Eliminar una transacción
   async deleteTransaction(id) {
+    await this.init();
     try {
       const url = `${this.baseUrl}/api/spent/delete/${id}`;
       const response = await fetch(url, {
@@ -130,6 +150,7 @@ class ApiService {
 
   // Editar una transacción
   async editTransaction(id, data) {
+    await this.init();
     try {
       const url = `${this.baseUrl}/api/spent/edit/${id}`;
       const response = await fetch(url, {
@@ -237,6 +258,7 @@ class ApiService {
 
   // Crear nueva transacción
   async createTransaction(data) {
+    await this.init();
     try {
       const url = `${this.baseUrl}/api/spent/create`;
       const response = await fetch(url, {
@@ -445,5 +467,8 @@ class ApiService {
 
 // Instancia global
 window.apiService = new ApiService();
+
+// Inicializar automáticamente
+window.apiService.init().catch(console.error);
 
 export default window.apiService;

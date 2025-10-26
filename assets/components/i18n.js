@@ -5,10 +5,25 @@ class I18n {
     this.currentLanguage = null;
     this.translations = {};
     this.availableLanguages = [];
-    this.FALLBACK_LANGUAGES = [import.meta.env.VITE_APP_LANG || 'es'];
+    this.config = null;
+    this.initPromise = this.loadConfig();
+  }
+
+  async loadConfig() {
+    try {
+      const response = await fetch('/api/config');
+      this.config = await response.json();
+      this.FALLBACK_LANGUAGES = [this.config.VITE_APP_LANG || 'es'];
+    } catch (error) {
+      console.warn('Failed to load runtime config for i18n, using defaults:', error);
+      this.FALLBACK_LANGUAGES = ['es'];
+    }
   }
 
   async init() {
+    // Load config first
+    await this.initPromise;
+    
     // Detectar idiomas disponibles
     await this.detectAvailableLanguages();
     
@@ -34,10 +49,10 @@ class I18n {
         .map(match => match.replace(/href="|\.json"/g, ''))
         .filter(lang => lang && !lang.includes('/'));
       
-      // Si no se pueden detectar automáticamente, fallback a buscar idiomas comunes
+      // Si no se pueden detectar automáticamente, usar solo idiomas que existen
       if (this.availableLanguages.length === 0) {
-        const commonLanguages = ['es', 'en', 'fr', 'de', 'it', 'pt', 'ca'];
-        for (const lang of commonLanguages) {
+        const knownLanguages = ['es', 'en']; // Solo incluir los que realmente existen
+        for (const lang of knownLanguages) {
           try {
             const testResponse = await fetch(`/assets/lang/${lang}.json`);
             if (testResponse.ok) {

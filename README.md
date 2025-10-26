@@ -81,14 +81,15 @@ To run with custom API configuration, you can build the image with build args:
 
 ```bash
 # Build with custom environment
-docker build -t spendtap \
-  --build-arg VITE_API_BASE_URL=https://your-api.com \
-  --build-arg VITE_API_TOKEN=your-token \
-  --build-arg VITE_APP_LANG=en \
-  .
+docker build -t spendtap .
 
 # Run the container
-docker run -p 8080:80 spendtap
+docker run --rm -it \
+  -e VITE_APP_LANG=es \
+  -e VITE_API_BASE_URL="http://localhost:8000" \
+  -e VITE_API_TOKEN="12345" \
+  -p 8022:80 \
+  spendtap
 ```
 
 ### Docker Compose (Optional)
