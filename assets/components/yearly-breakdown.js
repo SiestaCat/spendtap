@@ -10,6 +10,7 @@ class YearlyBreakdownView {
       totalExpenses: 0,
       balance: 0
     };
+    this.endBalance = 0;
   }
 
   // Inicializar vista
@@ -19,6 +20,7 @@ class YearlyBreakdownView {
     
     // Renderizar resumen y desgloses
     this.renderYearSummary();
+    this.renderEndBalance();
     this.renderCategoryBreakdown();
     this.renderDescriptionBreakdown();
     
@@ -37,115 +39,65 @@ class YearlyBreakdownView {
       try {
         console.log(`Loading yearly breakdown data for ${year}...`);
         
-        // Cargar datos de todos los meses del año
-        const promises = [];
-        for (let month = 1; month <= 12; month++) {
-          promises.push(window.apiService.getMonthData(month, year));
+        // Cargar datos usando los nuevos endpoints de breakdown
+        const [yearData, categoryData, descriptionData, balanceData] = await Promise.all([
+          window.apiService.getYearBreakdown(year),
+          window.apiService.getCategoryBreakdownYear(year),
+          window.apiService.getDescriptionBreakdownYear(year),
+          window.apiService.getBalance(12, year)
+        ]);
+        
+        // Procesar datos del resumen anual
+        if (yearData) {
+          this.yearSummary = {
+            totalIncome: Math.abs(parseFloat(yearData.income_amount || 0)),
+            totalExpenses: Math.abs(parseFloat(yearData.expense_amount || 0)),
+            balance: parseFloat(yearData.total || 0)
+          };
         }
         
-        const monthsData = await Promise.all(promises);
+        // Procesar datos del desglose por categoría
+        if (categoryData && categoryData.breakdown) {
+          this.categoryBreakdown = categoryData.breakdown.map(item => ({
+            category: item.category || 'Sin categoría',
+            count: parseInt(item.entry_count || 0),
+            totalAmount: Math.abs(parseFloat(item.total || 0)),
+            expenses: Math.abs(parseFloat(item.expense_amount || 0)),
+            income: Math.abs(parseFloat(item.income_amount || 0)),
+            sortValue: Math.abs(parseFloat(item.total || 0))
+          })).sort((a, b) => b.sortValue - a.sortValue);
+        }
         
-        // Combinar todos los datos
-        this.yearlyTransactions = monthsData.flat();
+        // Procesar datos del desglose por descripción
+        if (descriptionData && descriptionData.breakdown) {
+          this.descriptionBreakdown = descriptionData.breakdown.map(item => ({
+            description: item.description || 'Sin descripción',
+            count: parseInt(item.entry_count || 0),
+            totalAmount: Math.abs(parseFloat(item.total || 0)),
+            expenses: Math.abs(parseFloat(item.expense_amount || 0)),
+            income: Math.abs(parseFloat(item.income_amount || 0)),
+            category: item.category || 'Sin categoría',
+            sortValue: Math.abs(parseFloat(item.total || 0))
+          })).sort((a, b) => b.sortValue - a.sortValue);
+        }
         
-        // Calcular desgloses y resumen
-        this.calculateYearlyBreakdowns();
-        this.calculateYearSummary();
+        // Procesar datos del balance
+        if (balanceData) {
+          this.endBalance = parseFloat(balanceData.balance || 0);
+        }
         
-        console.log(`Loaded ${this.yearlyTransactions.length} transactions for yearly breakdown`);
+        console.log('Yearly breakdown data loaded from API successfully');
       } catch (error) {
         console.error('Failed to load yearly breakdown data:', error);
-        this.yearlyTransactions = [];
+        // Fallback a valores vacíos
+        this.yearSummary = { totalIncome: 0, totalExpenses: 0, balance: 0 };
+        this.categoryBreakdown = [];
+        this.descriptionBreakdown = [];
+        this.endBalance = 0;
       }
     }
   }
 
-  // Calcular resumen anual
-  calculateYearSummary() {
-    this.yearSummary = {
-      totalIncome: 0,
-      totalExpenses: 0,
-      balance: 0
-    };
-
-    this.yearlyTransactions.forEach(transaction => {
-      if (transaction.type === 'expense') {
-        this.yearSummary.totalExpenses += Math.abs(transaction.amount);
-      } else if (transaction.type === 'income') {
-        this.yearSummary.totalIncome += Math.abs(transaction.amount);
-      }
-    });
-
-    this.yearSummary.balance = this.yearSummary.totalIncome - this.yearSummary.totalExpenses;
-  }
-
-  // Calcular desgloses por categoría y descripción (anual)
-  calculateYearlyBreakdowns() {
-    // Desglose por categoría
-    const categoryMap = new Map();
-    
-    this.yearlyTransactions.forEach(transaction => {
-      const category = transaction.category || 'Sin categoría';
-      
-      if (!categoryMap.has(category)) {
-        categoryMap.set(category, {
-          category,
-          count: 0,
-          totalAmount: 0,
-          expenses: 0,
-          income: 0
-        });
-      }
-      
-      const data = categoryMap.get(category);
-      data.count++;
-      
-      if (transaction.type === 'expense') {
-        data.expenses += Math.abs(transaction.amount);
-        data.totalAmount += Math.abs(transaction.amount);
-      } else {
-        data.income += Math.abs(transaction.amount);
-        data.totalAmount += Math.abs(transaction.amount);
-      }
-    });
-    
-    // Convertir a array y ordenar por cantidad total
-    this.categoryBreakdown = Array.from(categoryMap.values())
-      .sort((a, b) => b.totalAmount - a.totalAmount);
-
-    // Desglose por descripción
-    const descriptionMap = new Map();
-    
-    this.yearlyTransactions.forEach(transaction => {
-      const description = transaction.description || 'Sin descripción';
-      
-      if (!descriptionMap.has(description)) {
-        descriptionMap.set(description, {
-          description,
-          count: 0,
-          totalAmount: 0,
-          expenses: 0,
-          income: 0,
-          category: transaction.category || 'Sin categoría'
-        });
-      }
-      
-      const data = descriptionMap.get(description);
-      data.count++;
-      
-      if (transaction.type === 'expense') {
-        data.expenses += Math.abs(transaction.amount);
-        data.totalAmount += Math.abs(transaction.amount);
-      } else {
-        data.income += Math.abs(transaction.amount);
-        data.totalAmount += Math.abs(transaction.amount);
-      }
-    });
-    
-    // Convertir a array y ordenar por cantidad total
-    this.descriptionBreakdown = Array.from(descriptionMap.values())
-      .sort((a, b) => b.totalAmount - a.totalAmount);
-  }
 
   // Formatear moneda
   formatCurrency(amount) {
@@ -188,6 +140,24 @@ class YearlyBreakdownView {
         totalBalanceElement.className = 'text-xl font-bold text-red-600';
       } else {
         totalBalanceElement.className = 'text-xl font-bold text-slate-700 dark:text-slate-300';
+      }
+    }
+  }
+
+  // Renderizar balance al final del año
+  renderEndBalance() {
+    const endBalanceElement = document.getElementById('yearly-end-balance');
+
+    if (endBalanceElement) {
+      endBalanceElement.textContent = this.formatCurrency(this.endBalance);
+      
+      // Color dinámico según el balance
+      if (this.endBalance > 0) {
+        endBalanceElement.className = 'text-2xl font-bold text-green-600';
+      } else if (this.endBalance < 0) {
+        endBalanceElement.className = 'text-2xl font-bold text-red-600';
+      } else {
+        endBalanceElement.className = 'text-2xl font-bold text-slate-700 dark:text-slate-300';
       }
     }
   }

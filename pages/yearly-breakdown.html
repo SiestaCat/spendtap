@@ -15,8 +15,8 @@
   </div>
 
   <!-- Resumen anual -->
-  <div class="mb-8 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
-    <h3 class="text-lg font-semibold mb-3" data-i18n="breakdown.yearlySummary">Yearly summary</h3>
+  <div class="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl">
+    <h3 class="text-lg font-semibold mb-3" data-i18n="breakdown.yearlySummary">Resumen anual</h3>
     <div class="grid grid-cols-3 gap-4">
       <div class="text-center">
         <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="month.totalIncome">Total ingresos</p>
@@ -30,6 +30,15 @@
         <p class="text-sm text-slate-600 dark:text-slate-400" data-i18n="month.balance">Balance total</p>
         <p class="text-xl font-bold" id="yearly-total-balance">0,00€</p>
       </div>
+    </div>
+  </div>
+
+  <!-- Balance al final del año -->
+  <div class="mb-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-200 dark:border-blue-700">
+    <h3 class="text-lg font-semibold mb-3 text-blue-900 dark:text-blue-100" data-i18n="breakdown.endOfYear">Balance al final del año</h3>
+    <div class="text-center">
+      <p class="text-sm text-blue-700 dark:text-blue-300 mb-1" data-i18n="breakdown.totalBalanceEndYear">Balance total al último día del año</p>
+      <p class="text-2xl font-bold" id="yearly-end-balance">0,00€</p>
     </div>
   </div>
 

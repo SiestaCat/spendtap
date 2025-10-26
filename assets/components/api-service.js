@@ -292,6 +292,155 @@ class ApiService {
       return null;
     }
   }
+
+  // === BREAKDOWN ENDPOINTS ===
+
+  // Obtener resumen mensual
+  async getMonthBreakdown(month, year) {
+    try {
+      const url = `${this.baseUrl}/api/spent/breakdown_month?month=${month}&year=${year}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching month breakdown:', error);
+      return null;
+    }
+  }
+
+  // Obtener resumen anual
+  async getYearBreakdown(year) {
+    try {
+      const url = `${this.baseUrl}/api/spent/breakdown_year?year=${year}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching year breakdown:', error);
+      return null;
+    }
+  }
+
+  // Obtener desglose por categorías mensuales
+  async getCategoryBreakdownMonth(month, year) {
+    try {
+      const url = `${this.baseUrl}/api/spent/breakdown_category_month?month=${month}&year=${year}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching category breakdown month:', error);
+      return null;
+    }
+  }
+
+  // Obtener desglose por categorías anuales
+  async getCategoryBreakdownYear(year) {
+    try {
+      const url = `${this.baseUrl}/api/spent/breakdown_category_year?year=${year}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching category breakdown year:', error);
+      return null;
+    }
+  }
+
+  // Obtener desglose por descripción mensual
+  async getDescriptionBreakdownMonth(month, year) {
+    try {
+      const url = `${this.baseUrl}/api/spent/breakdown_description_month?month=${month}&year=${year}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching description breakdown month:', error);
+      return null;
+    }
+  }
+
+  // Obtener desglose por descripción anual
+  async getDescriptionBreakdownYear(year) {
+    try {
+      const url = `${this.baseUrl}/api/spent/breakdown_description_year?year=${year}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching description breakdown year:', error);
+      return null;
+    }
+  }
+
+  // Obtener balance al final del período
+  async getBalance(month, year) {
+    try {
+      const url = `${this.baseUrl}/api/spent/balance?month=${month}&year=${year}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+      return null;
+    }
+  }
 }
 
 // Instancia global

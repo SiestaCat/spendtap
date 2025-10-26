@@ -10,6 +10,7 @@ class BreakdownView {
       totalExpenses: 0,
       balance: 0
     };
+    this.endBalance = 0;
   }
 
   // Inicializar vista
@@ -19,6 +20,7 @@ class BreakdownView {
     
     // Renderizar resumen y desgloses
     this.renderMonthSummary();
+    this.renderEndBalance();
     this.renderCategoryBreakdown();
     this.renderDescriptionBreakdown();
     
@@ -36,106 +38,66 @@ class BreakdownView {
     if (window.apiService) {
       try {
         console.log(`Loading breakdown data for ${month}/${year}...`);
-        this.transactions = await window.apiService.getMonthData(month, year);
         
-        // Calcular resumen y desgloses
-        this.calculateMonthSummary();
-        this.calculateBreakdowns();
+        // Cargar datos usando los nuevos endpoints de breakdown
+        const [monthData, categoryData, descriptionData, balanceData] = await Promise.all([
+          window.apiService.getMonthBreakdown(month, year),
+          window.apiService.getCategoryBreakdownMonth(month, year),
+          window.apiService.getDescriptionBreakdownMonth(month, year),
+          window.apiService.getBalance(month, year)
+        ]);
         
-        console.log(`Loaded ${this.transactions.length} transactions for breakdown`);
+        // Procesar datos del resumen mensual
+        if (monthData) {
+          this.monthSummary = {
+            totalIncome: Math.abs(parseFloat(monthData.income_amount || 0)),
+            totalExpenses: Math.abs(parseFloat(monthData.expense_amount || 0)),
+            balance: parseFloat(monthData.total || 0)
+          };
+        }
+        
+        // Procesar datos del desglose por categoría
+        if (categoryData && categoryData.breakdown) {
+          this.categoryBreakdown = categoryData.breakdown.map(item => ({
+            category: item.category || 'Sin categoría',
+            count: parseInt(item.entry_count || 0),
+            totalAmount: Math.abs(parseFloat(item.total || 0)),
+            expenses: Math.abs(parseFloat(item.expense_amount || 0)),
+            income: Math.abs(parseFloat(item.income_amount || 0)),
+            sortValue: Math.abs(parseFloat(item.total || 0))
+          })).sort((a, b) => b.sortValue - a.sortValue);
+        }
+        
+        // Procesar datos del desglose por descripción
+        if (descriptionData && descriptionData.breakdown) {
+          this.descriptionBreakdown = descriptionData.breakdown.map(item => ({
+            description: item.description || 'Sin descripción',
+            count: parseInt(item.entry_count || 0),
+            totalAmount: Math.abs(parseFloat(item.total || 0)),
+            expenses: Math.abs(parseFloat(item.expense_amount || 0)),
+            income: Math.abs(parseFloat(item.income_amount || 0)),
+            category: item.category || 'Sin categoría',
+            sortValue: Math.abs(parseFloat(item.total || 0))
+          })).sort((a, b) => b.sortValue - a.sortValue);
+        }
+        
+        // Procesar datos del balance
+        if (balanceData) {
+          this.endBalance = parseFloat(balanceData.balance || 0);
+        }
+        
+        console.log('Breakdown data loaded from API successfully');
       } catch (error) {
         console.error('Failed to load breakdown data:', error);
-        this.transactions = [];
+        // Fallback a valores vacíos
+        this.monthSummary = { totalIncome: 0, totalExpenses: 0, balance: 0 };
+        this.categoryBreakdown = [];
+        this.descriptionBreakdown = [];
+        this.endBalance = 0;
       }
     }
   }
 
-  // Calcular resumen mensual
-  calculateMonthSummary() {
-    this.monthSummary = {
-      totalIncome: 0,
-      totalExpenses: 0,
-      balance: 0
-    };
-
-    this.transactions.forEach(transaction => {
-      if (transaction.type === 'expense') {
-        this.monthSummary.totalExpenses += Math.abs(transaction.amount);
-      } else if (transaction.type === 'income') {
-        this.monthSummary.totalIncome += Math.abs(transaction.amount);
-      }
-    });
-
-    this.monthSummary.balance = this.monthSummary.totalIncome - this.monthSummary.totalExpenses;
-  }
-
-  // Calcular desgloses por categoría y descripción
-  calculateBreakdowns() {
-    // Desglose por categoría
-    const categoryMap = new Map();
-    
-    this.transactions.forEach(transaction => {
-      const category = transaction.category || 'Sin categoría';
-      
-      if (!categoryMap.has(category)) {
-        categoryMap.set(category, {
-          category,
-          count: 0,
-          totalAmount: 0,
-          expenses: 0,
-          income: 0
-        });
-      }
-      
-      const data = categoryMap.get(category);
-      data.count++;
-      
-      if (transaction.type === 'expense') {
-        data.expenses += Math.abs(transaction.amount);
-        data.totalAmount += Math.abs(transaction.amount);
-      } else {
-        data.income += Math.abs(transaction.amount);
-        data.totalAmount += Math.abs(transaction.amount);
-      }
-    });
-    
-    // Convertir a array y ordenar por cantidad total
-    this.categoryBreakdown = Array.from(categoryMap.values())
-      .sort((a, b) => b.totalAmount - a.totalAmount);
-
-    // Desglose por descripción
-    const descriptionMap = new Map();
-    
-    this.transactions.forEach(transaction => {
-      const description = transaction.description || 'Sin descripción';
-      
-      if (!descriptionMap.has(description)) {
-        descriptionMap.set(description, {
-          description,
-          count: 0,
-          totalAmount: 0,
-          expenses: 0,
-          income: 0,
-          category: transaction.category || 'Sin categoría'
-        });
-      }
-      
-      const data = descriptionMap.get(description);
-      data.count++;
-      
-      if (transaction.type === 'expense') {
-        data.expenses += Math.abs(transaction.amount);
-        data.totalAmount += Math.abs(transaction.amount);
-      } else {
-        data.income += Math.abs(transaction.amount);
-        data.totalAmount += Math.abs(transaction.amount);
-      }
-    });
-    
-    // Convertir a array y ordenar por cantidad total
-    this.descriptionBreakdown = Array.from(descriptionMap.values())
-      .sort((a, b) => b.totalAmount - a.totalAmount);
-  }
 
   // Formatear moneda
   formatCurrency(amount) {
@@ -178,6 +140,24 @@ class BreakdownView {
         totalBalanceElement.className = 'text-xl font-bold text-red-600';
       } else {
         totalBalanceElement.className = 'text-xl font-bold text-slate-700 dark:text-slate-300';
+      }
+    }
+  }
+
+  // Renderizar balance al final del mes
+  renderEndBalance() {
+    const endBalanceElement = document.getElementById('breakdown-end-balance');
+
+    if (endBalanceElement) {
+      endBalanceElement.textContent = this.formatCurrency(this.endBalance);
+      
+      // Color dinámico según el balance
+      if (this.endBalance > 0) {
+        endBalanceElement.className = 'text-2xl font-bold text-green-600';
+      } else if (this.endBalance < 0) {
+        endBalanceElement.className = 'text-2xl font-bold text-red-600';
+      } else {
+        endBalanceElement.className = 'text-2xl font-bold text-slate-700 dark:text-slate-300';
       }
     }
   }
