@@ -243,9 +243,18 @@ class MonthView {
     const expenses = this.expenses.filter(item => item.type === 'expense');
     const incomes = this.expenses.filter(item => item.type === 'income');
     
-    const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-    const totalIncome = incomes.reduce((sum, income) => sum + income.amount, 0);
+    // Asegurar que los gastos sean siempre positivos para el cálculo
+    const totalExpenses = expenses.reduce((sum, expense) => sum + Math.abs(expense.amount), 0);
+    const totalIncome = incomes.reduce((sum, income) => sum + Math.abs(income.amount), 0);
     const balance = totalIncome - totalExpenses;
+
+    console.log('Summary calculation:', {
+      totalExpenses,
+      totalIncome,
+      balance,
+      expensesCount: expenses.length,
+      incomesCount: incomes.length
+    });
 
     const totalExpensesElement = document.getElementById('total-expenses');
     const totalIncomeElement = document.getElementById('total-income');

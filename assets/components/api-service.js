@@ -58,13 +58,13 @@ class ApiService {
     const category = (transaction.category || '').toLowerCase();
     const description = (transaction.description || '').toLowerCase();
     
-    // Verificar por categoría
-    if (incomeCategories.includes(category)) {
-      return true;
-    }
+    // Debug para ver qué está clasificando
+    const isIncome = incomeCategories.includes(category) || 
+                    incomeKeywords.some(keyword => description.includes(keyword));
     
-    // Verificar por palabras clave en descripción
-    return incomeKeywords.some(keyword => description.includes(keyword));
+    console.log(`Transaction ${transaction.id}: "${transaction.description}" | Category: "${transaction.category}" | Amount: ${transaction.amount} | Classified as: ${isIncome ? 'INCOME' : 'EXPENSE'}`);
+    
+    return isIncome;
   }
 
   // Obtener todos los datos de un mes (gastos e ingresos detectados automáticamente)
