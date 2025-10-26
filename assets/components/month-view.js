@@ -5,7 +5,26 @@ class MonthView {
     this.expenses = [];
   }
 
-  // Generar datos ficticios de gastos e ingresos
+  // Cargar datos desde la API
+  async loadExpensesFromAPI() {
+    const { month, year } = window.dateManager.getCurrentMonthYear();
+    
+    if (window.apiService) {
+      try {
+        console.log(`Loading expenses for ${month}/${year} from API...`);
+        this.expenses = await window.apiService.getMonthData(month, year);
+        console.log(`Loaded ${this.expenses.length} transactions from API`);
+        return;
+      } catch (error) {
+        console.error('Failed to load from API, falling back to fictional data:', error);
+      }
+    }
+    
+    // Fallback a datos ficticios si no hay API
+    this.generateFictionalExpenses();
+  }
+
+  // Generar datos ficticios de gastos e ingresos (fallback)
   generateFictionalExpenses() {
     const { month, year } = window.dateManager.getCurrentMonthYear();
     const daysInMonth = new Date(year, month, 0).getDate();
@@ -182,8 +201,17 @@ class MonthView {
   }
 
   // Inicializar vista mensual
-  init() {
-    this.generateFictionalExpenses();
+  async init() {
+    // Mostrar indicador de carga
+    const container = document.getElementById('expenses-list');
+    if (container) {
+      container.innerHTML = '<div class="text-center py-8 text-slate-500">Cargando...</div>';
+    }
+
+    // Cargar datos (API o ficticios)
+    await this.loadExpensesFromAPI();
+    
+    // Renderizar
     this.renderExpensesList();
     this.renderSummary();
 
@@ -197,15 +225,11 @@ class MonthView {
           const month = currentUrl.searchParams.get('month');
           const year = currentUrl.searchParams.get('year');
           
-          console.log('Current URL params:', { month, year });
-          
           const newUrl = new URL(window.location.origin);
           newUrl.pathname = '/';
           
           if (month) newUrl.searchParams.set('month', month);
           if (year) newUrl.searchParams.set('year', year);
-          
-          console.log('New URL:', newUrl.toString());
           
           window.history.pushState({}, '', newUrl.toString());
           window.loadPage('home');

@@ -52,6 +52,7 @@ class TemplateSystem {
     // Dynamically load component scripts
     await this.loadScript('/assets/components/i18n.js');
     await this.loadScript('/assets/components/translation-updater.js');
+    await this.loadScript('/assets/components/api-service.js');
     await this.loadScript('/assets/components/date-manager.js');
     await this.loadScript('/assets/components/theme.js');
     await this.loadScript('/assets/components/step-buttons.js');
