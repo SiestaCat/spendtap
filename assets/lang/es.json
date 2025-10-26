@@ -94,9 +94,21 @@
     "importDataDesc": "Subir archivo CSV",
     "statistics": "Estadísticas",
     "statisticsDesc": "Ver reportes detallados",
+    "copyMonth": "Copiar mes anterior",
+    "copyMonthDesc": "Copiar transacciones del mes pasado",
     "printPage": "Imprimir",
     "printPageDesc": "Imprimir página actual",
     "clearData": "Borrar todos los datos",
     "clearDataDesc": "Eliminar todas las transacciones"
+  },
+  "copyMonth": {
+    "title": "Copiar mes anterior",
+    "description": "Esto copiará todas las transacciones del mes anterior al mes actual. Opcionalmente puedes filtrar por categoría.",
+    "categoryLabel": "Categoría (opcional)",
+    "categoryPlaceholder": "Dejar vacío para copiar todas las categorías",
+    "cancel": "Cancelar",
+    "copy": "Copiar mes",
+    "success": "Se copiaron {count} transacciones exitosamente",
+    "error": "Error al copiar las transacciones"
   }
 }

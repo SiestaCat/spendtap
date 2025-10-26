@@ -731,6 +731,7 @@ class MonthView {
     const exportBtn = document.getElementById('export-data');
     const importBtn = document.getElementById('import-data');
     const statsBtn = document.getElementById('view-stats');
+    const copyMonthBtn = document.getElementById('copy-month');
     const printBtn = document.getElementById('print-page');
     const clearBtn = document.getElementById('clear-data');
 
@@ -752,6 +753,13 @@ class MonthView {
       statsBtn.addEventListener('click', () => {
         alert('Statistics - Funcionalidad ficticia');
         optionsModal?.classList.add('hidden');
+      });
+    }
+
+    if (copyMonthBtn) {
+      copyMonthBtn.addEventListener('click', () => {
+        optionsModal?.classList.add('hidden');
+        this.openCopyMonthModal();
       });
     }
 
@@ -782,6 +790,289 @@ class MonthView {
         optionsModal.classList.add('hidden');
       }
     });
+
+    // Configurar modal de copiar mes anterior
+    this.setupCopyMonthModal();
+  }
+
+  // Configurar modal de copiar mes anterior
+  setupCopyMonthModal() {
+    const copyModal = document.getElementById('copy-month-modal');
+    const closeCopyBtn = document.getElementById('close-copy-month');
+    const cancelCopyBtn = document.getElementById('cancel-copy-month');
+    const confirmCopyBtn = document.getElementById('confirm-copy-month');
+
+    // Prevenir múltiples event listeners
+    if (this.copyModalConfigured) return;
+    this.copyModalConfigured = true;
+
+    // Cerrar modal
+    if (closeCopyBtn) {
+      closeCopyBtn.addEventListener('click', () => this.closeCopyMonthModal());
+    }
+
+    if (cancelCopyBtn) {
+      cancelCopyBtn.addEventListener('click', () => this.closeCopyMonthModal());
+    }
+
+    // Confirmar copia - usar una función que prevenga múltiples ejecuciones
+    if (confirmCopyBtn) {
+      confirmCopyBtn.addEventListener('click', () => this.handleCopyPreviousMonth());
+    }
+
+    // Cerrar modal al hacer click en el fondo
+    if (copyModal) {
+      copyModal.addEventListener('click', (e) => {
+        if (e.target === copyModal) {
+          this.closeCopyMonthModal();
+        }
+      });
+    }
+
+    // Configurar combobox de categorías
+    this.setupCopyCombobox();
+
+    // Cerrar con tecla Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && copyModal && !copyModal.classList.contains('hidden')) {
+        this.closeCopyMonthModal();
+      }
+    });
+  }
+
+  // Abrir modal de copiar mes anterior
+  async openCopyMonthModal() {
+    const copyModal = document.getElementById('copy-month-modal');
+    if (copyModal) {
+      copyModal.classList.remove('hidden');
+
+      // Cargar categorías para el dropdown
+      await this.loadCopyCategories();
+
+      // Focus en el botón de cerrar para accesibilidad, no en el input
+      const closeBtn = document.getElementById('close-copy-month');
+      if (closeBtn) {
+        closeBtn.focus();
+      }
+    }
+  }
+
+  // Cerrar modal de copiar mes anterior
+  closeCopyMonthModal() {
+    const copyModal = document.getElementById('copy-month-modal');
+    if (copyModal) {
+      copyModal.classList.add('hidden');
+      
+      // Limpiar el input
+      const categoryInput = document.getElementById('copy-category-input');
+      if (categoryInput) {
+        categoryInput.value = '';
+      }
+    }
+  }
+
+  // Cargar categorías para el combobox
+  async loadCopyCategories() {
+    if (window.apiService) {
+      try {
+        this.copyCategories = await window.apiService.getAllCategories();
+      } catch (error) {
+        console.error('Error loading categories for copy:', error);
+        this.copyCategories = [];
+      }
+    }
+  }
+
+  // Configurar combobox de categorías para copiar
+  setupCopyCombobox() {
+    const input = document.getElementById('copy-category-input');
+    const dropdown = document.getElementById('copy-category-dropdown');
+    
+    if (!input || !dropdown) return;
+    
+    // Prevenir múltiples configuraciones
+    if (this.copyComboboxConfigured) return;
+    this.copyComboboxConfigured = true;
+
+    let selectedIndex = -1;
+
+    // Función para filtrar y mostrar opciones
+    const showOptions = (filter = '') => {
+      const filteredOptions = (this.copyCategories || []).filter(option => 
+        option.toLowerCase().includes(filter.toLowerCase())
+      );
+
+      if (filteredOptions.length === 0) {
+        dropdown.classList.add('hidden');
+        return;
+      }
+
+      dropdown.innerHTML = filteredOptions.map((option, index) => 
+        `<div class="px-4 py-2 cursor-pointer text-slate-900 dark:text-white hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors" data-option="${option}" data-index="${index}">
+          ${option}
+        </div>`
+      ).join('');
+
+      dropdown.classList.remove('hidden');
+      selectedIndex = -1;
+    };
+
+    // Función para ocultar dropdown
+    const hideOptions = () => {
+      dropdown.classList.add('hidden');
+      selectedIndex = -1;
+    };
+
+    // Función para seleccionar opción
+    const selectOption = (option) => {
+      input.value = option;
+      hideOptions();
+    };
+
+    // Eventos del input
+    input.addEventListener('input', (e) => {
+      showOptions(e.target.value);
+    });
+
+    input.addEventListener('focus', () => {
+      if (this.copyCategories && this.copyCategories.length > 0) {
+        showOptions(input.value);
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      const options = dropdown.querySelectorAll('[data-option]');
+      
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, options.length - 1);
+          this.updateCopySelection(options, selectedIndex);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, -1);
+          this.updateCopySelection(options, selectedIndex);
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (selectedIndex >= 0 && options[selectedIndex]) {
+            selectOption(options[selectedIndex].dataset.option);
+          }
+          break;
+        case 'Escape':
+          hideOptions();
+          break;
+      }
+    });
+
+    // Eventos del dropdown
+    dropdown.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+    });
+
+    dropdown.addEventListener('click', (e) => {
+      const optionElement = e.target.closest('[data-option]');
+      if (optionElement) {
+        selectOption(optionElement.dataset.option);
+      }
+    });
+
+    // Ocultar cuando se hace click fuera
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+        hideOptions();
+      }
+    });
+  }
+
+  // Actualizar selección visual en el combobox
+  updateCopySelection(options, selectedIndex) {
+    options.forEach((opt, index) => {
+      if (index === selectedIndex) {
+        opt.classList.add('bg-indigo-100', 'dark:bg-indigo-900/50');
+      } else {
+        opt.classList.remove('bg-indigo-100', 'dark:bg-indigo-900/50');
+      }
+    });
+  }
+
+  // Manejar copia con prevención de doble ejecución
+  handleCopyPreviousMonth() {
+    // Prevenir múltiples ejecuciones simultáneas
+    if (this.copyInProgress) return;
+    this.copyPreviousMonth();
+  }
+
+  // Copiar mes anterior
+  async copyPreviousMonth() {
+    if (!window.apiService || this.copyInProgress) return;
+    
+    // Marcar como en progreso
+    this.copyInProgress = true;
+
+    // Obtener mes y año actual
+    const { month: currentMonth, year: currentYear } = window.dateManager.getCurrentMonthYear();
+    
+    // Calcular mes anterior
+    let sourceMonth = currentMonth - 1;
+    let sourceYear = currentYear;
+    
+    if (sourceMonth === 0) {
+      sourceMonth = 12;
+      sourceYear = currentYear - 1;
+    }
+
+    // Obtener categoría opcional
+    const categoryInput = document.getElementById('copy-category-input');
+    const category = categoryInput ? categoryInput.value.trim() : '';
+
+    try {
+      // Deshabilitar botón durante la operación
+      const confirmBtn = document.getElementById('confirm-copy-month');
+      if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Copiando...';
+      }
+
+      // Llamar a la API
+      const result = await window.apiService.copyMonth(
+        sourceMonth, 
+        sourceYear, 
+        currentMonth, 
+        currentYear, 
+        category || null
+      );
+
+      if (result && result.copied_count !== undefined) {
+        // Mostrar mensaje de éxito
+        const successMessage = window.i18n.t('copyMonth.success').replace('{count}', result.copied_count);
+        alert(successMessage);
+
+        // Cerrar modal
+        this.closeCopyMonthModal();
+
+        // Recargar datos de la vista
+        await this.loadExpensesFromAPI();
+        this.renderExpensesList();
+        this.renderSummary();
+      } else {
+        alert(window.i18n.t('copyMonth.error'));
+      }
+    } catch (error) {
+      console.error('Error copying previous month:', error);
+      alert(window.i18n.t('copyMonth.error'));
+    } finally {
+      // Rehabilitar botón
+      const confirmBtn = document.getElementById('confirm-copy-month');
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = window.i18n.t('copyMonth.copy');
+      }
+      
+      // Liberar el flag de progreso
+      this.copyInProgress = false;
+    }
   }
 }
 

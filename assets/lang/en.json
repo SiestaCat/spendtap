@@ -94,9 +94,21 @@
     "importDataDesc": "Upload CSV file",
     "statistics": "Statistics",
     "statisticsDesc": "View detailed reports",
+    "copyMonth": "Copy Previous Month",
+    "copyMonthDesc": "Copy entries from last month",
     "printPage": "Print",
     "printPageDesc": "Print current page",
     "clearData": "Clear All Data",
     "clearDataDesc": "Remove all transactions"
+  },
+  "copyMonth": {
+    "title": "Copy Previous Month",
+    "description": "This will copy all transactions from the previous month to the current month. You can optionally filter by category.",
+    "categoryLabel": "Category (optional)",
+    "categoryPlaceholder": "Leave empty to copy all categories",
+    "cancel": "Cancel",
+    "copy": "Copy Month",
+    "success": "{count} transactions copied successfully",
+    "error": "Error copying transactions"
   }
 }

@@ -249,6 +249,41 @@ class ApiService {
       return null;
     }
   }
+
+  // Copiar transacciones de un mes anterior
+  async copyMonth(sourceMonth, sourceYear, targetMonth, targetYear, category = null) {
+    try {
+      const url = `${this.baseUrl}/api/spent/copy_month`;
+      
+      const body = {
+        source_month: sourceMonth,
+        source_year: sourceYear,
+        target_month: targetMonth,
+        target_year: targetYear
+      };
+      
+      // Añadir categoría solo si se especifica
+      if (category && category.trim()) {
+        body.category = category.trim();
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify(body)
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error copying month:', error);
+      return null;
+    }
+  }
 }
 
 // Instancia global
