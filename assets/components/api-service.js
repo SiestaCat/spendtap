@@ -20,9 +20,16 @@ class ApiService {
   }
 
   // Obtener gastos por mes y año usando el endpoint correcto
-  async getExpenses(month, year) {
+  async getExpenses(month, year, categories = []) {
     try {
-      const url = `${this.baseUrl}/api/spent/filter?month=${month}&year=${year}`;
+      let url = `${this.baseUrl}/api/spent/filter?month=${month}&year=${year}`;
+      
+      // Añadir filtro por categorías si se especifica
+      if (categories && categories.length > 0) {
+        const categoriesParam = encodeURIComponent(JSON.stringify(categories));
+        url += `&categories=${categoriesParam}`;
+      }
+      
       const response = await fetch(url, {
         method: 'GET',
         headers: this.getHeaders()
@@ -68,9 +75,9 @@ class ApiService {
   }
 
   // Obtener todos los datos de un mes (gastos e ingresos detectados automáticamente)
-  async getMonthData(month, year) {
+  async getMonthData(month, year, categories = []) {
     try {
-      const expenses = await this.getExpenses(month, year);
+      const expenses = await this.getExpenses(month, year, categories);
 
       // Normalizar formato de datos y detectar ingresos automáticamente
       const normalizedTransactions = expenses.map(expense => ({
@@ -88,7 +95,8 @@ class ApiService {
       console.log('Transactions processed:', {
         total: normalizedTransactions.length,
         expenses: normalizedTransactions.filter(t => t.type === 'expense').length,
-        incomes: normalizedTransactions.filter(t => t.type === 'income').length
+        incomes: normalizedTransactions.filter(t => t.type === 'income').length,
+        filteredCategories: categories
       });
 
       return normalizedTransactions;

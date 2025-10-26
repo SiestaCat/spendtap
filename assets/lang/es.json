@@ -120,5 +120,14 @@
     "progress": "Eliminando transacciones...",
     "success": "Todas las transacciones han sido eliminadas",
     "error": "Error al eliminar algunas transacciones"
+  },
+  "filter": {
+    "title": "Filtrar por categorías",
+    "placeholder": "Buscar categorías para filtrar...",
+    "clearAll": "Limpiar filtros",
+    "noResults": "Sin resultados con los filtros aplicados",
+    "showing": "Mostrando {count} transacciones",
+    "allCategories": "Todas las categorías",
+    "showingFiltered": "Mostrando datos filtrados"
   }
 }

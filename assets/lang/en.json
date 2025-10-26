@@ -120,5 +120,14 @@
     "progress": "Deleting transactions...",
     "success": "All transactions have been deleted",
     "error": "Error deleting some transactions"
+  },
+  "filter": {
+    "title": "Filter by categories",
+    "placeholder": "Search categories to filter...",
+    "clearAll": "Clear filters",
+    "noResults": "No results with applied filters",
+    "showing": "Showing {count} transactions",
+    "allCategories": "All categories",
+    "showingFiltered": "Showing filtered data"
   }
 }

@@ -6,6 +6,8 @@ class MonthView {
     this.editStepState = { currentStepIndex: 1 }; // Para el editor de cantidad
     this.descriptionsCache = [];
     this.categoriesCache = [];
+    this.allCategories = []; // Para el filtro
+    this.selectedCategories = []; // Categorías seleccionadas para filtrar
   }
 
   // Cargar datos desde la API
@@ -15,7 +17,8 @@ class MonthView {
     if (window.apiService) {
       try {
         console.log(`Loading expenses for ${month}/${year} from API...`);
-        this.expenses = await window.apiService.getMonthData(month, year);
+        const categories = this.selectedCategories.length > 0 ? this.selectedCategories : [];
+        this.expenses = await window.apiService.getMonthData(month, year, categories);
         console.log(`Loaded ${this.expenses.length} transactions from API`);
         return;
       } catch (error) {
@@ -169,7 +172,7 @@ class MonthView {
     modal.classList.add('hidden');
   }
 
-  // Calcular y mostrar resumen
+  // Calcular y mostrar resumen (filtrado según categorías seleccionadas)
   renderSummary() {
     const expenses = this.expenses.filter(item => item.type === 'expense');
     const incomes = this.expenses.filter(item => item.type === 'income');
@@ -179,17 +182,20 @@ class MonthView {
     const totalIncome = incomes.reduce((sum, income) => sum + Math.abs(income.amount), 0);
     const balance = totalIncome - totalExpenses;
 
-    console.log('Summary calculation:', {
+    console.log('Summary calculation (filtered):', {
       totalExpenses,
       totalIncome,
       balance,
       expensesCount: expenses.length,
-      incomesCount: incomes.length
+      incomesCount: incomes.length,
+      appliedFilters: this.selectedCategories,
+      totalTransactions: this.expenses.length
     });
 
     const totalExpensesElement = document.getElementById('total-expenses');
     const totalIncomeElement = document.getElementById('total-income');
     const totalBalanceElement = document.getElementById('total-balance');
+    const filterIndicator = document.getElementById('summary-filter-indicator');
 
     if (totalExpensesElement) {
       totalExpensesElement.textContent = this.formatCurrency(totalExpenses);
@@ -206,6 +212,15 @@ class MonthView {
         totalBalanceElement.className = 'text-xl font-bold text-red-600';
       } else {
         totalBalanceElement.className = 'text-xl font-bold text-slate-700 dark:text-slate-300';
+      }
+    }
+    
+    // Mostrar/ocultar indicador de filtros aplicados
+    if (filterIndicator) {
+      if (this.selectedCategories.length > 0) {
+        filterIndicator.classList.remove('hidden');
+      } else {
+        filterIndicator.classList.add('hidden');
       }
     }
   }
@@ -794,6 +809,9 @@ class MonthView {
     
     // Configurar modal de Clear All Data
     this.setupClearAllModal();
+    
+    // Configurar filtro por categorías
+    this.setupCategoryFilter();
   }
 
   // Configurar modal de copiar mes anterior
@@ -1264,6 +1282,211 @@ class MonthView {
     if (progressText) {
       progressText.textContent = `${processed} / ${total}`;
     }
+  }
+
+  // Configurar filtro por categorías
+  async setupCategoryFilter() {
+    const filterInput = document.getElementById('category-filter-input');
+    const filterDropdown = document.getElementById('category-filter-dropdown');
+    const clearFiltersBtn = document.getElementById('clear-filters-btn');
+    const selectedCategoriesDiv = document.getElementById('selected-categories');
+
+    if (!filterInput || !filterDropdown) return;
+
+    // Cargar todas las categorías disponibles
+    await this.loadAllCategories();
+
+    let selectedIndex = -1;
+
+    // Función para mostrar opciones en el dropdown
+    const showOptions = (filter = '') => {
+      const filteredOptions = this.allCategories.filter(category => 
+        category.toLowerCase().includes(filter.toLowerCase()) &&
+        !this.selectedCategories.includes(category)
+      );
+
+      if (filteredOptions.length === 0) {
+        filterDropdown.classList.add('hidden');
+        return;
+      }
+
+      filterDropdown.innerHTML = filteredOptions.map((category, index) => 
+        `<div class="px-4 py-2 cursor-pointer text-slate-900 dark:text-white hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors" data-category="${category}" data-index="${index}">
+          ${category}
+        </div>`
+      ).join('');
+
+      filterDropdown.classList.remove('hidden');
+      selectedIndex = -1;
+    };
+
+    // Función para ocultar dropdown
+    const hideOptions = () => {
+      filterDropdown.classList.add('hidden');
+      selectedIndex = -1;
+    };
+
+    // Función para seleccionar categoría
+    const selectCategory = (category) => {
+      if (!this.selectedCategories.includes(category)) {
+        this.selectedCategories.push(category);
+        this.renderSelectedCategories();
+        this.applyFilters();
+      }
+      filterInput.value = '';
+      hideOptions();
+    };
+
+    // Eventos del input
+    filterInput.addEventListener('input', (e) => {
+      showOptions(e.target.value);
+    });
+
+    filterInput.addEventListener('focus', () => {
+      if (this.allCategories.length > 0) {
+        showOptions(filterInput.value);
+      }
+    });
+
+    filterInput.addEventListener('keydown', (e) => {
+      const options = filterDropdown.querySelectorAll('[data-category]');
+      
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, options.length - 1);
+          this.updateFilterSelection(options, selectedIndex);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, -1);
+          this.updateFilterSelection(options, selectedIndex);
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (selectedIndex >= 0 && options[selectedIndex]) {
+            selectCategory(options[selectedIndex].dataset.category);
+          }
+          break;
+        case 'Escape':
+          hideOptions();
+          break;
+      }
+    });
+
+    // Eventos del dropdown
+    filterDropdown.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+    });
+
+    filterDropdown.addEventListener('click', (e) => {
+      const categoryElement = e.target.closest('[data-category]');
+      if (categoryElement) {
+        selectCategory(categoryElement.dataset.category);
+      }
+    });
+
+    // Ocultar cuando se hace click fuera
+    document.addEventListener('click', (e) => {
+      if (!filterInput.contains(e.target) && !filterDropdown.contains(e.target)) {
+        hideOptions();
+      }
+    });
+
+    // Botón para limpiar filtros
+    if (clearFiltersBtn) {
+      clearFiltersBtn.addEventListener('click', () => {
+        this.clearAllFilters();
+      });
+    }
+  }
+
+  // Cargar todas las categorías disponibles
+  async loadAllCategories() {
+    if (window.apiService) {
+      try {
+        this.allCategories = await window.apiService.getAllCategories();
+      } catch (error) {
+        console.error('Error loading categories for filter:', error);
+        this.allCategories = [];
+      }
+    }
+  }
+
+  // Actualizar selección visual en el dropdown de filtro
+  updateFilterSelection(options, selectedIndex) {
+    options.forEach((opt, index) => {
+      if (index === selectedIndex) {
+        opt.classList.add('bg-indigo-100', 'dark:bg-indigo-900/50');
+      } else {
+        opt.classList.remove('bg-indigo-100', 'dark:bg-indigo-900/50');
+      }
+    });
+  }
+
+  // Renderizar categorías seleccionadas
+  renderSelectedCategories() {
+    const selectedCategoriesDiv = document.getElementById('selected-categories');
+    const clearFiltersBtn = document.getElementById('clear-filters-btn');
+
+    if (!selectedCategoriesDiv) return;
+
+    if (this.selectedCategories.length === 0) {
+      selectedCategoriesDiv.classList.add('hidden');
+      if (clearFiltersBtn) clearFiltersBtn.classList.add('hidden');
+      return;
+    }
+
+    selectedCategoriesDiv.classList.remove('hidden');
+    if (clearFiltersBtn) clearFiltersBtn.classList.remove('hidden');
+
+    selectedCategoriesDiv.innerHTML = this.selectedCategories.map(category => 
+      `<span class="inline-flex items-center gap-1 px-3 py-1 text-sm font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 rounded-full">
+        ${category}
+        <button type="button" class="ml-1 text-indigo-500 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300" data-remove-category="${category}">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </span>`
+    ).join('');
+
+    // Event listeners para remover categorías
+    selectedCategoriesDiv.addEventListener('click', (e) => {
+      const removeBtn = e.target.closest('[data-remove-category]');
+      if (removeBtn) {
+        const category = removeBtn.dataset.removeCategory;
+        this.removeCategoryFilter(category);
+      }
+    });
+  }
+
+  // Remover una categoría del filtro
+  removeCategoryFilter(category) {
+    this.selectedCategories = this.selectedCategories.filter(cat => cat !== category);
+    this.renderSelectedCategories();
+    this.applyFilters();
+  }
+
+  // Limpiar todos los filtros
+  clearAllFilters() {
+    this.selectedCategories = [];
+    this.renderSelectedCategories();
+    this.applyFilters();
+  }
+
+  // Aplicar filtros (recargar datos)
+  async applyFilters() {
+    // Mostrar indicador de carga
+    const container = document.getElementById('expenses-list');
+    if (container) {
+      container.innerHTML = '<div class="text-center py-8 text-slate-500">Cargando...</div>';
+    }
+
+    // Cargar datos con filtros aplicados
+    await this.loadExpensesFromAPI();
+    this.renderExpensesList();
+    this.renderSummary();
   }
 }
 
