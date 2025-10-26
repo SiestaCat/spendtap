@@ -136,7 +136,120 @@ saveBtn.addEventListener('click', () => {
   toastTimer = setTimeout(() => toast.classList.add('hidden'), 1400);
 });
 
-// Demo: Ver mes
-document.getElementById('viewMonthBtn').addEventListener('click', () => {
-  alert('Aquí iría la vista mensual.');
+// Initialize theme functionality
+function initTheme() {
+  const themeBtn = document.getElementById('themeBtn');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeLabel = document.getElementById('themeLabel');
+
+  if (themeBtn && themeIcon && themeLabel) {
+    // Re-apply current theme
+    Theme.apply(Theme.get());
+
+    // Add event listener for theme switching
+    themeBtn.addEventListener('click', () => {
+      const current = Theme.get();
+      const next = current === 'system' ? 'light' : current === 'light' ? 'dark' : 'system';
+      Theme.set(next);
+    });
+  }
+}
+
+// Initialize step functionality
+function initStepButtons() {
+  const stepBtn = document.getElementById('stepBtn');
+  const stepLabel = document.getElementById('stepLabel');
+
+  if (stepBtn && stepLabel) {
+    // Reset to default step
+    currentStepIndex = 1; // 1€ by default
+    stepLabel.textContent = STEP_VALUES[currentStepIndex].label;
+
+    // Add event listener
+    stepBtn.addEventListener('click', () => {
+      currentStepIndex = (currentStepIndex + 1) % STEP_VALUES.length;
+      stepLabel.textContent = STEP_VALUES[currentStepIndex].label;
+    });
+  }
+}
+
+// Initialize plus/minus buttons
+function initPlusMinusButtons() {
+  const minusBtn = document.getElementById('minusBtn');
+  const plusBtn = document.getElementById('plusBtn');
+
+  if (minusBtn && plusBtn) {
+    // Remove any existing listeners by cloning nodes
+    const newMinusBtn = minusBtn.cloneNode(true);
+    const newPlusBtn = plusBtn.cloneNode(true);
+    minusBtn.parentNode.replaceChild(newMinusBtn, minusBtn);
+    plusBtn.parentNode.replaceChild(newPlusBtn, plusBtn);
+
+    // Add new event listeners
+    // Eventos para botón menos
+    newMinusBtn.addEventListener('mousedown', () => startInterval(false));
+    newMinusBtn.addEventListener('mouseup', stopInterval);
+    newMinusBtn.addEventListener('mouseleave', stopInterval);
+    newMinusBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startInterval(false);
+    });
+    newMinusBtn.addEventListener('touchend', stopInterval);
+    newMinusBtn.addEventListener('touchcancel', stopInterval);
+
+    // Eventos para botón más
+    newPlusBtn.addEventListener('mousedown', () => startInterval(true));
+    newPlusBtn.addEventListener('mouseup', stopInterval);
+    newPlusBtn.addEventListener('mouseleave', stopInterval);
+    newPlusBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startInterval(true);
+    });
+    newPlusBtn.addEventListener('touchend', stopInterval);
+    newPlusBtn.addEventListener('touchcancel', stopInterval);
+  }
+}
+
+// Initialize save button
+function initSaveButton() {
+  const saveBtn = document.getElementById('saveBtn');
+  const toast = document.querySelector('#toast > div');
+
+  if (saveBtn && toast) {
+    saveBtn.addEventListener('click', () => {
+      toast.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.add('hidden'), 1400);
+    });
+  }
+}
+
+// Initialize home page functionality
+function initHomePage() {
+  // Initialize all components
+  initTheme();
+  initStepButtons();
+  initPlusMinusButtons();
+  initSaveButton();
+
+  // Demo: Ver mes
+  const viewMonthBtn = document.getElementById('viewMonthBtn');
+  if (viewMonthBtn) {
+    viewMonthBtn.addEventListener('click', () => {
+      if (window.loadPage) {
+        window.loadPage('month');
+      } else {
+        alert('Aquí iría la vista mensual.');
+      }
+    });
+  }
+}
+
+// Export for template system
+window.initHomePage = initHomePage;
+window.initTheme = initTheme;
+
+console.log('main.js loaded, functions exported:', {
+  initHomePage: !!window.initHomePage,
+  initTheme: !!window.initTheme
 });

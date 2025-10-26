@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/assets/style.css" />
+  </head>
+  <body class="h-full bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 text-slate-800 dark:text-slate-100">
+    <div class="min-h-screen max-w-sm mx-auto flex flex-col p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
+      <!-- Header Component -->
+      <div id="header-component"></div>
+      
+      <!-- Main Content -->
+      <main class="flex-1 flex flex-col {{mainClass}}">
+        <div id="main-content">
+          {{content}}
+        </div>
+      </main>
+    </div>
+
+    <!-- Toast Component -->
+    <div id="toast" class="pointer-events-none fixed inset-x-0 bottom-20 flex justify-center">
+      <div class="hidden items-center gap-2 rounded-full bg-black/80 text-white px-4 py-2 text-sm shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <span>Guardado</span>
+      </div>
+    </div>
+
+    <!-- Template System will load main.js dynamically -->
+  </body>
+</html>
