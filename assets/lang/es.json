@@ -46,6 +46,7 @@
   "month": {
     "summary": "Resumen del mes",
     "totalExpenses": "Total gastos",
-    "averagePerDay": "Promedio por día"
+    "totalIncome": "Total ingresos",
+    "balance": "Balance total"
   }
 }
