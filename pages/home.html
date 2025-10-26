@@ -1,41 +1,39 @@
-<div class="flex flex-col items-center justify-center">
-  <div class="flex flex-col items-center gap-6">
-    <div class="flex flex-col items-center gap-3">
-      <div class="flex items-stretch gap-3">
-        <!-- Botón menos -->
-        <button id="minusBtn" type="button" aria-label="Disminuir" class="size-14 rounded-2xl grid place-items-center ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow hover:scale-[1.02] active:scale-95 transition">
-          <span class="text-lg font-bold">−</span>
-        </button>
+<div class="flex flex-col items-center gap-6">
+  <div class="flex flex-col items-center gap-3">
+    <div class="flex items-stretch gap-3">
+      <!-- Botón menos -->
+      <button id="minusBtn" type="button" aria-label="Disminuir" class="size-14 rounded-2xl grid place-items-center ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow hover:scale-[1.02] active:scale-95 transition">
+        <span class="text-lg font-bold">−</span>
+      </button>
 
-        <!-- Input number -->
-        <label class="sr-only" for="numberInput">Cantidad</label>
-        <input id="numberInput" type="number" inputmode="decimal" min="0" step="0.01" value="1.00"
-               class="w-28 text-center text-3xl font-medium rounded-2xl ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 selection:bg-indigo-500/20" />
+      <!-- Input number -->
+      <label class="sr-only" for="numberInput">Cantidad</label>
+      <input id="numberInput" type="number" inputmode="decimal" min="0" step="0.01" value="1.00"
+             class="w-28 text-center text-3xl font-medium rounded-2xl ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 selection:bg-indigo-500/20" />
 
-        <!-- Botón más -->
-        <button id="plusBtn" type="button" aria-label="Aumentar" class="size-14 rounded-2xl grid place-items-center ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow hover:scale-[1.02] active:scale-95 transition">
-          <span class="text-lg font-bold">+</span>
-        </button>
-      </div>
-
-      <!-- Botón selector de paso -->
-      <button id="stepBtn" type="button" aria-label="Cambiar paso" class="w-28 py-1 rounded-2xl ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow hover:scale-[1.02] active:scale-95 transition flex items-center justify-center">
-        <span id="stepLabel" class="text-lg font-bold">1€</span>
+      <!-- Botón más -->
+      <button id="plusBtn" type="button" aria-label="Aumentar" class="size-14 rounded-2xl grid place-items-center ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow hover:scale-[1.02] active:scale-95 transition">
+        <span class="text-lg font-bold">+</span>
       </button>
     </div>
 
-    <!-- Botón Guardar -->
-    <button id="saveBtn" type="button" class="inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-base font-medium bg-indigo-600 text-white shadow hover:bg-indigo-500 active:scale-95 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5l3.5-3.5M12 16.5l-3.5-3.5M12 16.5V4.5"/></svg>
-      Guardar
+    <!-- Botón selector de paso -->
+    <button id="stepBtn" type="button" aria-label="Cambiar paso" class="w-28 py-1 rounded-2xl ring-1 ring-slate-300/80 dark:ring-slate-700/80 bg-white dark:bg-slate-800 shadow hover:scale-[1.02] active:scale-95 transition flex items-center justify-center">
+      <span id="stepLabel" class="text-lg font-bold">1€</span>
+    </button>
+  </div>
+
+  <!-- Botón Guardar -->
+  <button id="saveBtn" type="button" class="inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-base font-medium bg-indigo-600 text-white shadow hover:bg-indigo-500 active:scale-95 transition">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5l3.5-3.5M12 16.5l-3.5-3.5M12 16.5V4.5"/></svg>
+    Guardar
+  </button>
+
+  <!-- Botón Ver mes -->
+  <div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-sm px-4">
+    <button id="viewMonthBtn" type="button" class="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-base font-medium ring-1 ring-slate-300 dark:ring-slate-700 bg-white/80 dark:bg-slate-800/70 shadow hover:shadow-md transition">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 2v3M16 2v3M3.5 9.5h17M5 6h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/></svg>
+      Ver mes
     </button>
   </div>
 </div>
-
-<!-- Botón Ver mes (abajo del todo) -->
-<footer class="mt-8">
-  <button id="viewMonthBtn" type="button" class="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-base font-medium ring-1 ring-slate-300 dark:ring-slate-700 bg-white/80 dark:bg-slate-800/70 shadow hover:shadow-md transition">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 2v3M16 2v3M3.5 9.5h17M5 6h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/></svg>
-    Ver mes
-  </button>
-</footer>

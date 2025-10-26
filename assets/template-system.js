@@ -49,8 +49,12 @@ class TemplateSystem {
       headerElement.innerHTML = headerComponent;
     }
 
-    // Dynamically load main.js script
-    await this.loadScript('/assets/main.js');
+    // Dynamically load component scripts
+    await this.loadScript('/assets/components/theme.js');
+    await this.loadScript('/assets/components/step-buttons.js');
+    await this.loadScript('/assets/components/plus-minus-buttons.js');
+    await this.loadScript('/assets/components/save-button.js');
+    await this.loadScript('/assets/components/home-page.js');
 
     // Wait a bit for script to execute and then initialize
     setTimeout(() => {
