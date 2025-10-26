@@ -193,6 +193,9 @@ class MonthView {
     // Guardar referencia para eliminación
     this.currentTransaction = transaction;
     
+    // Asegurar que siempre se abra en modo vista
+    this.resetToViewMode();
+    
     // Rellenar datos del modal
     document.getElementById('modal-description').textContent = transaction.description;
     document.getElementById('modal-category').textContent = this.getCategoryName(transaction.category);
@@ -233,6 +236,12 @@ class MonthView {
     if (closeButton) {
       closeButton.focus();
     }
+  }
+
+  // Resetear al modo vista
+  resetToViewMode() {
+    document.getElementById('modal-edit').classList.add('hidden');
+    document.getElementById('modal-view').classList.remove('hidden');
   }
 
   // Cerrar modal
@@ -482,8 +491,7 @@ class MonthView {
 
   // Cerrar modo edición
   closeEditMode() {
-    document.getElementById('modal-edit').classList.add('hidden');
-    document.getElementById('modal-view').classList.remove('hidden');
+    this.resetToViewMode();
   }
 
   // Cargar datos para los dropdowns
