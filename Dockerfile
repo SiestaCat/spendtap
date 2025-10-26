@@ -1,5 +1,5 @@
 # Use Node.js 18 LTS as base image
-FROM node:18-alpine AS build
+FROM node:22-alpine AS build
 
 # Set working directory
 WORKDIR /app
@@ -53,6 +53,8 @@ EOF
 
 # Copy built application from build stage
 COPY --from=build /app/dist /usr/share/nginx/html
+# Copy static assets
+COPY --from=build /app/assets /usr/share/nginx/html/assets
 
 # Expose port 80
 EXPOSE 80
