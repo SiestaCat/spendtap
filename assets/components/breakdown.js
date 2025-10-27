@@ -419,37 +419,25 @@ class BreakdownView {
 
     if (prevYearBtn) {
       prevYearBtn.addEventListener('click', () => {
-        if (window.dateManager) {
-          window.dateManager.navigateToPrevYear();
-          this.reloadWithNewDate();
-        }
+        this.navigateToPreviousYear();
       });
     }
 
     if (prevMonthBtn) {
       prevMonthBtn.addEventListener('click', () => {
-        if (window.dateManager) {
-          window.dateManager.navigateToPrevMonth();
-          this.reloadWithNewDate();
-        }
+        this.navigateToPreviousMonth();
       });
     }
 
     if (nextMonthBtn) {
       nextMonthBtn.addEventListener('click', () => {
-        if (window.dateManager) {
-          window.dateManager.navigateToNextMonth();
-          this.reloadWithNewDate();
-        }
+        this.navigateToNextMonth();
       });
     }
 
     if (nextYearBtn) {
       nextYearBtn.addEventListener('click', () => {
-        if (window.dateManager) {
-          window.dateManager.navigateToNextYear();
-          this.reloadWithNewDate();
-        }
+        this.navigateToNextYear();
       });
     }
 
@@ -467,6 +455,49 @@ class BreakdownView {
     url.searchParams.set('year', year);
     window.history.pushState({}, '', url.toString());
     
+    // Recargar datos y vista
+    await this.loadData();
+    this.renderMonthSummary();
+    this.renderEndBalance();
+    this.renderCategoryBreakdown();
+    this.renderDescriptionBreakdown();
+    this.updatePeriod();
+    this.updateNavigationLabels();
+  }
+
+  // Funciones de navegación específicas para breakdown
+  navigateToPreviousYear() {
+    const { month, year } = window.dateManager.getCurrentMonthYear();
+    this.navigateToDate(month, year - 1);
+  }
+
+  navigateToNextYear() {
+    const { month, year } = window.dateManager.getCurrentMonthYear();
+    this.navigateToDate(month, year + 1);
+  }
+
+  navigateToPreviousMonth() {
+    const { month, year } = window.dateManager.getCurrentMonthYear();
+    const newMonth = month === 1 ? 12 : month - 1;
+    const newYear = month === 1 ? year - 1 : year;
+    this.navigateToDate(newMonth, newYear);
+  }
+
+  navigateToNextMonth() {
+    const { month, year } = window.dateManager.getCurrentMonthYear();
+    const newMonth = month === 12 ? 1 : month + 1;
+    const newYear = month === 12 ? year + 1 : year;
+    this.navigateToDate(newMonth, newYear);
+  }
+
+  // Navegar a fecha específica
+  async navigateToDate(month, year) {
+    // Actualizar URL
+    const url = new URL(window.location);
+    url.searchParams.set('month', month);
+    url.searchParams.set('year', year);
+    window.history.pushState({}, '', url.toString());
+
     // Recargar datos y vista
     await this.loadData();
     this.renderMonthSummary();

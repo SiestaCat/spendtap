@@ -422,19 +422,13 @@ class YearlyBreakdownView {
 
     if (prevYearBtn) {
       prevYearBtn.addEventListener('click', () => {
-        if (window.dateManager) {
-          window.dateManager.navigateToPrevYear();
-          this.reloadWithNewDate();
-        }
+        this.navigateToPreviousYear();
       });
     }
 
     if (nextYearBtn) {
       nextYearBtn.addEventListener('click', () => {
-        if (window.dateManager) {
-          window.dateManager.navigateToNextYear();
-          this.reloadWithNewDate();
-        }
+        this.navigateToNextYear();
       });
     }
 
@@ -442,16 +436,25 @@ class YearlyBreakdownView {
     this.updateNavigationLabels();
   }
 
-  // Recargar vista con nueva fecha
-  async reloadWithNewDate() {
+  // Funciones de navegación específicas para yearly breakdown
+  navigateToPreviousYear() {
     const { month, year } = window.dateManager.getCurrentMonthYear();
-    
+    this.navigateToDate(month, year - 1);
+  }
+
+  navigateToNextYear() {
+    const { month, year } = window.dateManager.getCurrentMonthYear();
+    this.navigateToDate(month, year + 1);
+  }
+
+  // Navegar a fecha específica
+  async navigateToDate(month, year) {
     // Actualizar URL
     const url = new URL(window.location);
     url.searchParams.set('month', month);
     url.searchParams.set('year', year);
     window.history.pushState({}, '', url.toString());
-    
+
     // Recargar datos y vista
     await this.loadYearlyData();
     this.renderYearSummary();
